@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "443378336257",
+    "project_id": "live-auction-system-26b33",
+    "storage_bucket": "live-auction-system-26b33.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:443378336257:android:aa14309f688a60dbd3b600",
+        "android_client_info": {
+          "package_name": "com.example.liveauctionsystem"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_wxXz-UgLmP_ZaE6ZwCKl9GoKFvhRQTU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
