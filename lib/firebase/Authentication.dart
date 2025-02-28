@@ -20,7 +20,7 @@ class Authentication {
       await Future.delayed(Duration(seconds: 1));
       // SharedPreferences sp = await SharedPreferences.getInstance();
       // sp.setBool(KEYLOGIN, true);
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>const homepage(),));
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>HomePage(),));
 
     } on FirebaseAuthException catch (e){
       if(e.code=='user-not-found'){

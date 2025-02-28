@@ -22,10 +22,16 @@ class DefaultFirebaseOptions {
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
-      // case TargetPlatform.iOS:
-      //   return ios;
-      // case TargetPlatform.macOS:
-      //   return macos;
+      case TargetPlatform.iOS:
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
+      case TargetPlatform.macOS:
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         return windows;
       case TargetPlatform.linux:
@@ -57,24 +63,6 @@ class DefaultFirebaseOptions {
     projectId: 'live-auction-system-26b33',
     storageBucket: 'live-auction-system-26b33.firebasestorage.app',
   );
-  //
-  // static const FirebaseOptions ios = FirebaseOptions(
-  //   apiKey: 'AIzaSyBSdWSt7C9PMzsn8xh8XW6D10rTq3WVdy0',
-  //   appId: '1:443378336257:ios:dd1a4eb5f025b694d3b600',
-  //   messagingSenderId: '443378336257',
-  //   projectId: 'live-auction-system-26b33',
-  //   storageBucket: 'live-auction-system-26b33.firebasestorage.app',
-  //   iosBundleId: 'com.example.liveauctionsystem',
-  // );
-  //
-  // static const FirebaseOptions macos = FirebaseOptions(
-  //   apiKey: 'AIzaSyBSdWSt7C9PMzsn8xh8XW6D10rTq3WVdy0',
-  //   appId: '1:443378336257:ios:dd1a4eb5f025b694d3b600',
-  //   messagingSenderId: '443378336257',
-  //   projectId: 'live-auction-system-26b33',
-  //   storageBucket: 'live-auction-system-26b33.firebasestorage.app',
-  //   iosBundleId: 'com.example.liveauctionsystem',
-  // );
 
   static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'AIzaSyDfDMfxcdAt44_r2gyYJ5pNGxSzD8mtYh8',
@@ -84,7 +72,6 @@ class DefaultFirebaseOptions {
     authDomain: 'live-auction-system-26b33.firebaseapp.com',
     storageBucket: 'live-auction-system-26b33.firebasestorage.app',
     measurementId: 'G-Z36BRH0G5M',
-
   );
 
 }

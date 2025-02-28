@@ -22,7 +22,7 @@ class _wrapperState extends State<wrapper> {
           return Center(child: CircularProgressIndicator()); // Loading indicator
         }
         if (snapshot.hasData) {
-          return homepage(); // If logged in, go to HomePage
+          return HomePage(); // If logged in, go to HomePage
         } else {
           return login(); // If logged out, go to Login page
         }
