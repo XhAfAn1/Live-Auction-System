@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:path/path.dart';
 
 class AddProductForm extends StatefulWidget {
   @override
@@ -9,6 +13,29 @@ class AddProductForm extends StatefulWidget {
 }
 
 class _AddProductFormState extends State<AddProductForm> {
+  SupabaseClient supabase= Supabase.instance.client;
+  File? image;
+  String path="";
+  String url="";
+  getImage() async{
+    var pic=await ImagePicker().pickImage(source: ImageSource.gallery);
+    setState(() {
+      image=File(pic!.path);
+    });
+  }
+  upload()async{
+    path=basename(image!.path);
+    supabase.storage.from("itemPhotos").upload(path,image!).then((value) => print("done"));
+  }
+  download() async{
+    path=basename(image!.path);
+    url=await supabase.storage.from("itemPhotos").getPublicUrl(path);
+    print(url);
+    setState(() {
+      _imageUrl=url;
+    });
+  }
+
   final _formKey = GlobalKey<FormState>();
   final _firestore = FirebaseFirestore.instance;
 
@@ -42,7 +69,7 @@ class _AddProductFormState extends State<AddProductForm> {
   }
 
   // Submit form
-  void _submitForm() async {
+  void _submitForm(context) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
@@ -119,10 +146,20 @@ class _AddProductFormState extends State<AddProductForm> {
                 },
                 onSaved: (value) => _startingPrice = double.parse(value!),
               ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Image URL'),
-                onSaved: (value) => _imageUrl = value!,
-              ),
+            image!=null ? Container(child: Image.file(image!),) : Container(),
+              // TextFormField(
+              //   decoration: InputDecoration(labelText: 'Image URL'),
+              //   onSaved: (value) => _imageUrl = value!,
+              // ),
+              ElevatedButton(onPressed: (){
+                getImage();
+              }, child: Text("select photo")),
+              ElevatedButton(onPressed: (){
+                upload();
+              }, child: Text("upload")),
+              ElevatedButton(onPressed: () {
+                download();
+              },child: Text("download"),),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Category'),
                 onSaved: (value) => _category = value!,
@@ -141,7 +178,9 @@ class _AddProductFormState extends State<AddProductForm> {
               ),
               SizedBox(height: 24),
               ElevatedButton(
-                onPressed: _submitForm,
+                onPressed: (){
+                  _submitForm(context);
+                },
                 child: Text('Add Product'),
               ),
             ],
