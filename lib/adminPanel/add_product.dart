@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:path/path.dart';
 
+import '../home/homepage.dart';
+
 class AddProductForm extends StatefulWidget {
   @override
   _AddProductFormState createState() => _AddProductFormState();
@@ -28,7 +30,9 @@ class _AddProductFormState extends State<AddProductForm> {
     supabase.storage.from("itemPhotos").upload(path,image!).then((value) => print("done"));
   }
   download() async{
-    path=basename(image!.path);
+   // path=basename(image!.path);
+    path=DateTime.now().toString();
+    supabase.storage.from("itemPhotos").upload(path,image!).then((value) => print("done"));
     url=await supabase.storage.from("itemPhotos").getPublicUrl(path);
     print(url);
     setState(() {
@@ -72,7 +76,7 @@ class _AddProductFormState extends State<AddProductForm> {
   void _submitForm(context) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      await upload();
+    //  await upload();
       await download();
 
       // Create a new product map
@@ -100,6 +104,7 @@ class _AddProductFormState extends State<AddProductForm> {
 
       // Clear the form
       _formKey.currentState!.reset();
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(),));
     }
   }
 
