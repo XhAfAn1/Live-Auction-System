@@ -72,6 +72,8 @@ class _AddProductFormState extends State<AddProductForm> {
   void _submitForm(context) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      await upload();
+      await download();
 
       // Create a new product map
       final productData = {
@@ -88,7 +90,8 @@ class _AddProductFormState extends State<AddProductForm> {
       };
 
       // Add product to Firestore
-      await _firestore.collection('products').add(productData);
+    //  await _firestore.collection('products').add(productData);
+      await _firestore.collection('products').doc(DateTime.now().toString()).set(productData);
 
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
@@ -154,12 +157,12 @@ class _AddProductFormState extends State<AddProductForm> {
               ElevatedButton(onPressed: (){
                 getImage();
               }, child: Text("select photo")),
-              ElevatedButton(onPressed: (){
-                upload();
-              }, child: Text("upload")),
-              ElevatedButton(onPressed: () {
-                download();
-              },child: Text("download"),),
+              // ElevatedButton(onPressed: (){
+              //   upload();
+              // }, child: Text("upload")),
+              // ElevatedButton(onPressed: () {
+              //   download();
+              // },child: Text("download"),),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Category'),
                 onSaved: (value) => _category = value!,
