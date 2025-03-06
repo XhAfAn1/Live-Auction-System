@@ -10,6 +10,8 @@ import 'package:path/path.dart';
 import '../home/homepage.dart';
 
 class AddProductForm extends StatefulWidget {
+  const AddProductForm({super.key});
+
   @override
   _AddProductFormState createState() => _AddProductFormState();
 }

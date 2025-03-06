@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:liveauctionsystem/home/homepage.dart';
+import 'package:liveauctionsystem/login%20signup/signup.dart';
 
 import '../firebase/Authentication.dart';
 
-class login extends StatefulWidget {
+class login extends StatelessWidget {
   const login({super.key});
 
-  @override
-  State<login> createState() => _loginState();
-}
-
-class _loginState extends State<login> {
   @override
   Widget build(BuildContext context) {
     TextEditingController email = TextEditingController();
@@ -57,9 +53,6 @@ class _loginState extends State<login> {
                   backgroundColor: Colors.blueAccent),
               onPressed: () {
                Authentication().signin(email: email.text, password: password.text,context: context);
-                // SharedPreferences sp = await SharedPreferences.getInstance();
-                // sp.setBool(KEYLOGIN, true);
-               // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>const homepage(),));
               },
               child: Text("login",
                   style: TextStyle(
@@ -72,7 +65,7 @@ class _loginState extends State<login> {
 
           TextButton(
               onPressed: () {
-              //  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const signup(),));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const signup(),));
               },
               child: Text("Sign Up",
                 style: TextStyle(
@@ -84,14 +77,6 @@ class _loginState extends State<login> {
 
         ],
       ),
-
-      // body: Center(
-      //   child: ElevatedButton(onPressed: () async{
-      //     SharedPreferences sp = await SharedPreferences.getInstance();
-      //     sp.setBool(KEYLOGIN, true);
-      //     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>const MyHomePage(),));
-      //   }, child: Text("login",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),),
-      // ),
     );
   }
 }
