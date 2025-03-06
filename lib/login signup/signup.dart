@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class signup extends StatefulWidget {
@@ -12,6 +14,19 @@ class signup extends StatefulWidget {
 
 class _signupState extends State<signup> {
   File? image;
+
+  getImage()async{
+    var pic=await ImagePicker().pickImage(source: ImageSource.gallery);
+    setState(() {
+      image=File(pic!.path);
+    });
+  }
+
+  createAccount() async{
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,78 +38,152 @@ class _signupState extends State<signup> {
         child: Center(
           child: ListView(
             children: [
-              TextFormField(
+           Align(
+             alignment: Alignment.center,
+             child: Stack(
+               alignment: Alignment.bottomRight,
+               children: [
+                 CircleAvatar(radius: 60,backgroundImage: image!=null  ?  FileImage(image!) : null,
+                   child: image == null ? Icon(Icons.person, size: 60) : null,),
+
+                 Container(
+                   height:40,
+                   width: 40,
+                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(50),color: Colors.blue),
+
+                   child: IconButton(
+                     onPressed: (){
+                       getImage();
+                     },icon: Icon(Icons.add_a_photo_outlined,),color: Colors.white,),
+                 ),
+
+               ],
+             ),
+           ),
+
+              SizedBox(height: 16),TextFormField(
                 decoration: InputDecoration(
-                  label: Text("Username"),
+                  label: Text("Name"),
                   border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey, width: 1.5),
                       borderRadius: BorderRadius.all(Radius.circular(10))),
-                  hintText: "Enter Username",
+                  hintText: "Enter Name",
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey, width: 1.5), // Default border color
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue, width: 2.0), // Border color when focused
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red, width: 1.5), // Border color when error occurs
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                ),
+
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your name';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16), TextFormField(
+                decoration: InputDecoration(
+                  label: Text("Email"),
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey, width: 1.5),
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  hintText: "Enter Email Address",
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey, width: 1.5), // Default border color
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue, width: 2.0), // Border color when focused
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red, width: 1.5), // Border color when error occurs
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a product name';
+                    return 'Please enter a email address';
                   }
                   return null;
                 },
               ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Description'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a description';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Starting Price'),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a starting price';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Please enter a valid number';
-                  }
-                  return null;
-                },
-              ),
-              image!=null ? Container(child: Image.file(image!),) : Container(),
-              // TextFormField(
-              //   decoration: InputDecoration(labelText: 'Image URL'),
-              //   onSaved: (value) => _imageUrl = value!,
+              // SizedBox(height: 16), TextFormField(
+              //   decoration: InputDecoration(
+              //     label: Text("phone Number"),
+              //     border: OutlineInputBorder(
+              //         borderSide: BorderSide(color: Colors.grey, width: 1.5),
+              //         borderRadius: BorderRadius.all(Radius.circular(10))),
+              //     hintText: "Enter phone Number",
+              //     enabledBorder: OutlineInputBorder(
+              //       borderSide: BorderSide(color: Colors.grey, width: 1.5), // Default border color
+              //       borderRadius: BorderRadius.all(Radius.circular(10)),
+              //     ),
+              //     focusedBorder: OutlineInputBorder(
+              //       borderSide: BorderSide(color: Colors.blue, width: 2.0), // Border color when focused
+              //       borderRadius: BorderRadius.all(Radius.circular(10)),
+              //     ),
+              //     errorBorder: OutlineInputBorder(
+              //       borderSide: BorderSide(color: Colors.red, width: 1.5), // Border color when error occurs
+              //       borderRadius: BorderRadius.all(Radius.circular(10)),
+              //     ),
+              //   ),
+              //   keyboardType: TextInputType.number,
+              //   validator: (value) {
+              //     if (value == null || value.isEmpty) {
+              //       return 'Please enter a phone number';
+              //     }
+              //     if (double.tryParse(value) == null) {
+              //       return 'Please enter a valid number';
+              //     }
+              //     return null;
+              //   },
               // ),
-              ElevatedButton(onPressed: (){
-              //  getImage();
-              }, child: Text("select photo")),
-              // ElevatedButton(onPressed: (){
-              //   upload();
-              // }, child: Text("upload")),
-              // ElevatedButton(onPressed: () {
-              //   download();
-              // },child: Text("download"),),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Category'),
+              SizedBox(height: 16),TextFormField(
+                decoration: InputDecoration(
+                  label: Text("Password"),
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey, width: 1.5),
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  hintText: "Enter Password",
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey, width: 1.5), // Default border color
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue, width: 2.0), // Border color when focused
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red, width: 1.5), // Border color when error occurs
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a password';
+                  }
+                  return null;
+                },
 
               ),
-              SizedBox(height: 16),
-              // Text('Auction Start Time: ${DateFormat('yyyy-MM-dd').format(_auctionStartTime)}'),
-              // ElevatedButton(
-              //   onPressed: () => _selectDate(context, true),
-              //   child: Text('Select Start Date'),
-              // ),
-              // SizedBox(height: 16),
-              // Text('Auction End Time: ${DateFormat('yyyy-MM-dd').format(_auctionEndTime)}'),
-              // ElevatedButton(
-              //   onPressed: () => _selectDate(context, false),
-              //   child: Text('Select End Date'),
-              // ),
+
+
               SizedBox(height: 24),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                 onPressed: (){
-
+                createAccount();
                 },
-                child: Text('Add Product'),
+                child: Text("Sign Up",style: TextStyle(color: Colors.white),),
               ),
             ],
           ),
@@ -102,4 +191,6 @@ class _signupState extends State<signup> {
       )
     );
   }
+
+
 }
