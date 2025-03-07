@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,15 +17,18 @@ class Singleproductview extends StatefulWidget {
 }
 
 class _SingleproductviewState extends State<Singleproductview> {
- //late int _remainingTime;
+  TextEditingController bidController=TextEditingController();
+   //late int _remainingTime;
  //late Timer _timer;
   @override
-  void initState() {
+  void initState(){
     // TODO: implement initState
     super.initState();
-  // _remainingTime = widget.product.getRemainingTime();
+    bidController=TextEditingController(text: widget.product.currentPrice.toString());
+    // _remainingTime = widget.product.getRemainingTime();
   // _startTimer();
   }
+
 
   // void _startTimer() {
   //   _timer = Timer.periodic(Duration(seconds: 1), (timer) {
@@ -57,13 +61,33 @@ class _SingleproductviewState extends State<Singleproductview> {
           Text('Current Price: \$${widget.product.currentPrice.toStringAsFixed(2)}'),
           SizedBox(height: 8),
          // Text('Time Remaining: ${widget.product.formatRemainingTime(_remainingTime)}'),
-          SizedBox(height: 18),
-          ElevatedButton(onPressed: () async{
+          SizedBox(height: 20),
 
-           // await FirebaseFirestore.instance.collection('products').doc(widget.product.productId).collection("biders").add(<String, dynamic>{"uid":FirebaseAuth.instance.currentUser!.uid, "timestamp": FieldValue.serverTimestamp(),});
-            await FirebaseFirestore.instance.collection('products').doc(widget.product.productId).collection("biders").doc(DateTime.timestamp().toString()).set(<String, dynamic>{"uid":FirebaseAuth.instance.currentUser!.uid, "timestamp": FieldValue.serverTimestamp(),});
-          }, child: Text("Bid")),
-          SizedBox(height: 18),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: 100,
+                  child: TextField(
+                    controller: bidController,
+                  ),
+                ),
+                ElevatedButton(onPressed: () async{
+
+                    widget.product.placeBid(context,double.parse(bidController.text));
+                    if(widget.product.currentPrice<double.parse(bidController.text)){
+                      setState(() {
+
+                      });
+
+                    }
+
+                 }, child: Text("Bid")),
+                SizedBox(width: 20),
+              ],
+            ),
+
 
 
           Expanded(
@@ -74,7 +98,7 @@ class _SingleproductviewState extends State<Singleproductview> {
                 // if (snapshot.connectionState == ConnectionState.waiting) {
                 //   return Center(child: CircularProgressIndicator());
                 // }
-
+                priceUpdate();
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return ListTile(
                     title: Text('Loading...', style: TextStyle(color: Colors.black)),
@@ -106,9 +130,15 @@ class _SingleproductviewState extends State<Singleproductview> {
                               final userData = userSnapshot.data!.data() ;
                               final email = userData?['email'] ?? 'No email found';
                               final name = userData?['name'] ?? 'No name found';
-                              return ListTile(
-                                title: Text(email, style: TextStyle(color: Colors.black)),
-                                subtitle: Text(uid, style: TextStyle(color: Colors.grey)),
+                              final bid = bider['bid'] ?? 'No bid found';
+                              final bidName = bider['name'] ?? 'No bid found';
+
+
+                                return ListTile(
+                                title: Text(name, style: TextStyle(color: Colors.black)),
+                               // subtitle: Text(uid, style: TextStyle(color: Colors.grey)),
+                               // subtitle: Text(bid.toString(), style: TextStyle(color: Colors.grey)),
+                                subtitle: Text(bid.toString(), style: TextStyle(color: Colors.grey)),
                               );
                           },);
                         },
@@ -123,5 +153,12 @@ class _SingleproductviewState extends State<Singleproductview> {
       ),
     );
   }
+priceUpdate() async{
+    if(widget.product.currentPrice<await FirebaseFirestore.instance.collection("products").doc(widget.product.productId).get().then((value) => value.get("currentPrice"))){
+      widget.product.currentPrice= await FirebaseFirestore.instance.collection("products").doc(widget.product.productId).get().then((value) => value.get("currentPrice"));
+setState(() {
 
+});
+    }
+}
 }

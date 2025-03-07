@@ -18,37 +18,43 @@ class Authentication {
       print("success");
       print(FirebaseAuth.instance.currentUser);
       await Future.delayed(Duration(seconds: 1));
-      // SharedPreferences sp = await SharedPreferences.getInstance();
-      // sp.setBool(KEYLOGIN, true);
+
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>HomePage(),));
 
     } on FirebaseAuthException catch (e){
       if(e.code=='user-not-found'){
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text( e.code.toString())) );
         print(e.code);
       }
       else if(e.code=='wrong-password'){
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text( e.code.toString())) );
         print(e.code);
       }
       else if(e.code=='invalid-email'){
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text( e.code.toString())) );
         print(e.code);
       }
       else if(e.code=='user-disabled'){
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text( e.code.toString())) );
         print(e.code);
       }
-      else
+      else{
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text( e.code.toString())) );
         print(e.code);
+      }
+
 
 
     }
     catch(e){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text( e.toString())) );
       print(e);
     }
   }
 
   Future<void> signout(context) async {
     await FirebaseAuth.instance.signOut();
-    // SharedPreferences sp = await SharedPreferences.getInstance();
-    // sp.setBool(KEYLOGIN, false);
+
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>const login(),));
   }
 

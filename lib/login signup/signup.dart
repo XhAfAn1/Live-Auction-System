@@ -74,8 +74,10 @@ class _signupState extends State<signup> {
              child: Stack(
                alignment: Alignment.bottomRight,
                children: [
-                 CircleAvatar(radius: 60,backgroundImage: image!=null  ?  FileImage(image!) : null,
-                   child: image == null ? Icon(Icons.person, size: 60,) : null,),
+                 CircleAvatar(
+                   backgroundColor: Colors.grey[300],
+                   radius: 60,backgroundImage: image!=null  ?  FileImage(image!) : null,
+                   child: image == null ? Icon(Icons.person, size: 60,color:Colors.white) : null,),
 
                  Container(
                    height:40,

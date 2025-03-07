@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class Product {
   final String productId;
@@ -28,13 +30,52 @@ class Product {
   });
 
   // Method to place a bid
-  bool placeBid(double bidAmount) {
-    if (bidAmount > currentPrice && status == 'active') {
-      currentPrice = bidAmount;
-      return true;
+  Future<void> placeBid(context,double bidPrice) async {
+    if(bidPrice>currentPrice){
+      try {
+        String userId = FirebaseAuth.instance.currentUser!.uid;
+
+        // Fetch user details first (asynchronously)
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection("Users")
+            .doc(userId)
+            .get();
+
+        if (!userDoc.exists || !userDoc.data().toString().contains('name')) {
+          throw Exception("User data not found");
+        }
+
+        String userName = userDoc.get("name"); // Fetch user's name
+
+
+        // Save bid details in Firestore
+        await FirebaseFirestore.instance
+            .collection('products')
+            .doc(productId)
+            .collection("biders")
+            .doc(DateTime.now().toString()) // Unique ID
+            .set({
+          "uid": userId,
+          "name": userName,
+          "timestamp": FieldValue.serverTimestamp(),
+          "bid": bidPrice
+        });
+        await FirebaseFirestore.instance
+            .collection('products')
+            .doc(productId).update({"currentPrice":bidPrice});
+
+        currentPrice=bidPrice;
+
+        print("Bid placed successfully!");
+      } catch (e) {
+        print("Error placing bid: $e");
+      }
     }
-    return false;
+    else if(bidPrice<=currentPrice){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Bid Price must be higher")));
+    }
   }
+
 
   // Method to update the status of the auction
   void updateStatus() {
@@ -59,10 +100,14 @@ class Product {
 
   // Format remaining time as HH:MM:SS
   String formatRemainingTime(int seconds) {
-    final hours = (seconds ~/ 3600).toString().padLeft(2, '0');
-    final minutes = ((seconds % 3600) ~/ 60).toString().padLeft(2, '0');
-    final remainingSeconds = (seconds % 60).toString().padLeft(2, '0');
-    return '$hours:$minutes:$remainingSeconds';
+    if (seconds <= 0) {
+      return '00\h 00\m 00\s';
+    }
+    final days = (seconds ~/ 86400).toString().padLeft(2, '0'); // Calculate days
+    final hours = ((seconds % 86400) ~/ 3600).toString().padLeft(2, '0'); // Hours without counting extra days
+    final minutes = ((seconds % 3600) ~/ 60).toString().padLeft(2, '0'); // Minutes
+    final remainingSeconds = (seconds % 60).toString().padLeft(2, '0'); // Seconds
+    return '$days\d $hours\h $minutes\m $remainingSeconds\s';
   }
 
   // Convert the product to a map (useful for Firebase or other databases)
