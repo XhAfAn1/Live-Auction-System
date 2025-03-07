@@ -23,7 +23,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text('Auction Products'),
         actions: [
 
@@ -158,6 +160,7 @@ class _ProductCardState extends State<ProductCard> {
         Navigator.push(context, MaterialPageRoute(builder: (context) => Singleproductview(product: widget.product),));
       },
       child: Card(
+        color: Colors.white70,
         margin: EdgeInsets.all(8),
         child: Padding(
           padding: EdgeInsets.all(16),
@@ -169,7 +172,7 @@ class _ProductCardState extends State<ProductCard> {
               SizedBox(height: 8),
               Text(widget.product.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               SizedBox(height: 8),
-              Text(widget.product.description),
+              Text(widget.product.description,style: TextStyle(fontWeight: FontWeight.w600),maxLines: 2,overflow: TextOverflow.ellipsis,),
               SizedBox(height: 8),
               Text('Starting Price: \$${widget.product.startingPrice.toStringAsFixed(2)}'),
               SizedBox(height: 8),

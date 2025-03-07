@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
@@ -49,7 +50,7 @@ class _AddProductFormState extends State<AddProductForm> {
   String _name = '';
   String _description = '';
   double _startingPrice = 0.0;
-  String _sellerId = 'seller123'; // Replace with actual seller ID
+  String _sellerId =   FirebaseAuth.instance.currentUser!.uid;
   DateTime _auctionStartTime = DateTime.now();
   DateTime _auctionEndTime = DateTime.now().add(Duration(days: 7));
   String _imageUrl = '';
