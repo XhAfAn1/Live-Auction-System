@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:liveauctionsystem/adminPanel/add_product.dart';
@@ -16,6 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
@@ -23,6 +25,53 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Auction Products'),
+        actions: [
+
+      Container(
+        child: FutureBuilder<DocumentSnapshot>(
+          future: FirebaseFirestore.instance
+              .collection("Users")
+              .doc(FirebaseAuth.instance.currentUser?.uid) // Use the logged-in user's ID
+              .get(),
+
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircleAvatar(
+                radius: 30,
+                backgroundColor: Colors.grey[300],
+                child: CircularProgressIndicator(), // Show a loading indicator
+              );
+            }
+
+            if (!snapshot.hasData || !snapshot.data!.exists) {
+              return CircleAvatar(
+                radius: 30,
+                backgroundColor: Colors.grey[300],
+                child: Icon(Icons.person, size: 30, color: Colors.white), // Default icon
+              );
+            }
+
+            // Fetch profile image URL from Firestore
+            String? imageUrl = snapshot.data!.get("profileImageUrl"); // Ensure field exists
+
+            return CircleAvatar(
+              radius: 30,
+              backgroundImage: (imageUrl != null && imageUrl.isNotEmpty)
+                  ? NetworkImage(imageUrl)
+                  : null,
+              backgroundColor: Colors.grey[300],
+              child: (imageUrl == null || imageUrl.isEmpty)
+                  ? Icon(Icons.person, size: 30, color: Colors.white)
+                  : null,
+            );
+          },
+        ),
+      ),
+
+          Container(
+            width: 20,
+          )
+        ],
       ),
       body:Column(
         children: [

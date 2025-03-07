@@ -1,9 +1,14 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:liveauctionsystem/classes/user.dart';
+import 'package:liveauctionsystem/login%20signup/login.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../firebase/Authentication.dart';
 
 class signup extends StatefulWidget {
   const signup({super.key});
@@ -14,6 +19,11 @@ class signup extends StatefulWidget {
 
 class _signupState extends State<signup> {
   File? image;
+  String path="";
+  String url="";
+  TextEditingController name =TextEditingController();
+  TextEditingController email =TextEditingController();
+  TextEditingController password =TextEditingController();
 
   getImage()async{
     var pic=await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -22,7 +32,28 @@ class _signupState extends State<signup> {
     });
   }
 
-  createAccount() async{
+  createAccount(context) async{
+
+    try{
+      final credential= await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email.text.trim(),password: password.text.trim());
+      path=DateTime.now().toString();
+      print("1");
+      if(image!=null){
+        Supabase.instance.client.storage.from("UserPhotos").upload(path,image!);
+        url=await Supabase.instance.client.storage.from("UserPhotos").getPublicUrl(path);
+        print("2");
+      }
+      print("3");
+      UserModel newUser=UserModel(id: credential.user!.uid, name: name.text, email: email.text, profileImageUrl: url);
+      await FirebaseFirestore.instance.collection("Users").doc(credential.user!.uid).set(newUser.toJson());
+      await Authentication().signout(context);
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => login(),));
+      print("4");
+    }
+    catch(e){
+      print(e);
+    }
+
 
 
   }
@@ -44,7 +75,7 @@ class _signupState extends State<signup> {
                alignment: Alignment.bottomRight,
                children: [
                  CircleAvatar(radius: 60,backgroundImage: image!=null  ?  FileImage(image!) : null,
-                   child: image == null ? Icon(Icons.person, size: 60) : null,),
+                   child: image == null ? Icon(Icons.person, size: 60,) : null,),
 
                  Container(
                    height:40,
@@ -62,6 +93,7 @@ class _signupState extends State<signup> {
            ),
 
               SizedBox(height: 16),TextFormField(
+                controller: name,
                 decoration: InputDecoration(
                   label: Text("Name"),
                   border: OutlineInputBorder(
@@ -81,15 +113,16 @@ class _signupState extends State<signup> {
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
                 ),
-
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your name';
-                  }
-                  return null;
-                },
+                //
+                // validator: (value) {
+                //   if (value == null || value.isEmpty) {
+                //     return 'Please enter your name';
+                //   }
+                //   return null;
+                // },
               ),
               SizedBox(height: 16), TextFormField(
+                controller: email,
                 decoration: InputDecoration(
                   label: Text("Email"),
                   border: OutlineInputBorder(
@@ -109,12 +142,12 @@ class _signupState extends State<signup> {
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a email address';
-                  }
-                  return null;
-                },
+                // validator: (value) {
+                //   if (value == null || value.isEmpty) {
+                //     return 'Please enter a email address';
+                //   }
+                //   return null;
+                // },
               ),
               // SizedBox(height: 16), TextFormField(
               //   decoration: InputDecoration(
@@ -148,6 +181,7 @@ class _signupState extends State<signup> {
               //   },
               // ),
               SizedBox(height: 16),TextFormField(
+                controller: password,
                 decoration: InputDecoration(
                   label: Text("Password"),
                   border: OutlineInputBorder(
@@ -167,12 +201,12 @@ class _signupState extends State<signup> {
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a password';
-                  }
-                  return null;
-                },
+                // validator: (value) {
+                //   if (value == null || value.isEmpty) {
+                //     return 'Please enter a password';
+                //   }
+                //   return null;
+                // },
 
               ),
 
@@ -181,7 +215,7 @@ class _signupState extends State<signup> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                 onPressed: (){
-                createAccount();
+                createAccount(context);
                 },
                 child: Text("Sign Up",style: TextStyle(color: Colors.white),),
               ),
