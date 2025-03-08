@@ -49,7 +49,8 @@ class Product {
 
 
         // Save bid details in Firestore
-        await FirebaseFirestore.instance
+        //await
+        FirebaseFirestore.instance
             .collection('products')
             .doc(productId)
             .collection("biders")
@@ -60,7 +61,8 @@ class Product {
           "timestamp": FieldValue.serverTimestamp(),
           "bid": bidPrice
         });
-        await FirebaseFirestore.instance
+        //await
+        FirebaseFirestore.instance
             .collection('products')
             .doc(productId).update({"currentPrice":bidPrice});
 

@@ -49,8 +49,11 @@ class _signupState extends State<signup> {
       await Authentication().signout(context);
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => login(),));
       print("4");
+    }on FirebaseAuthException catch (e){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text( e.code.toString())) );
     }
     catch(e){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text( e.toString())) );
       print(e);
     }
 
