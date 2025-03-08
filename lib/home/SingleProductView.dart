@@ -18,28 +18,16 @@ class Singleproductview extends StatefulWidget {
 
 class _SingleproductviewState extends State<Singleproductview> {
   TextEditingController bidController=TextEditingController();
-   //late int _remainingTime;
- //late Timer _timer;
+
   @override
   void initState(){
     // TODO: implement initState
     super.initState();
     bidController=TextEditingController(text: (widget.product.currentPrice+1).toString());
-    // _remainingTime = widget.product.getRemainingTime();
-  // _startTimer();
   }
 
 
-  // void _startTimer() {
-  //   _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-  //     setState(() {
-  //       _remainingTime = widget.product.getRemainingTime();
-  //       if (_remainingTime <= 0) {
-  //         _timer.cancel();
-  //       }
-  //     });
-  //   });
-  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,9 +48,10 @@ class _SingleproductviewState extends State<Singleproductview> {
             SizedBox(height: 8),
             Text(widget.product.description),
             SizedBox(height: 8),
+            timer(product: widget.product),
+            SizedBox(height: 8),
             Text('Starting Price: \$${widget.product.startingPrice.toStringAsFixed(2)}'),
             SizedBox(height: 8),
-
             StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
                   .collection("products")
@@ -76,6 +65,9 @@ class _SingleproductviewState extends State<Singleproductview> {
                 if (!snapshot.hasData || !snapshot.data!.exists) {
                   return Center(child: Text('Product not found.'));
                 }
+
+
+
 
                 // Extract Firestore data
                 var productData = snapshot.data!.data() as Map<String, dynamic>;
@@ -92,9 +84,11 @@ class _SingleproductviewState extends State<Singleproductview> {
                   });
                 }
 
+
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                  //  Text("Remaining Time: ${_remainingTime ~/ 3600}h ${(_remainingTime % 3600) ~/ 60}m ${_remainingTime % 60}s"),
                     Text('Current Price: \$${newPrice.toStringAsFixed(2)}'),
                     SizedBox(height: 20),
 
@@ -189,4 +183,44 @@ class _SingleproductviewState extends State<Singleproductview> {
     );
   }
 
+}
+
+class timer extends StatefulWidget {
+  final Product product;
+  const timer({super.key, required this.product});
+
+  @override
+  State<timer> createState() => _timerState();
+}
+
+class _timerState extends State<timer> {
+  late int _remainingTime;
+  late Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _remainingTime = widget.product.getRemainingTime();
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _remainingTime = widget.product.getRemainingTime();
+        if (_remainingTime <= 0) {
+          _timer.cancel();
+        }
+      });
+    });
+  }
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return  Text('Time Remaining: ${widget.product.formatRemainingTime(_remainingTime)}',style: TextStyle(fontWeight: FontWeight.w700),);
+  }
 }

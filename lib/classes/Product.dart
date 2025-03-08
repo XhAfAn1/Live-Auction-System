@@ -97,6 +97,7 @@ class Product {
     }
     return null;
   }
+
   int getRemainingTime() {
     final now = DateTime.now();
     return auctionEndTime.difference(now).inSeconds;
