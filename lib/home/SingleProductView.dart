@@ -24,7 +24,7 @@ class _SingleproductviewState extends State<Singleproductview> {
   void initState(){
     // TODO: implement initState
     super.initState();
-    bidController=TextEditingController(text: widget.product.currentPrice.toString());
+    bidController=TextEditingController(text: (widget.product.currentPrice+1).toString());
     // _remainingTime = widget.product.getRemainingTime();
   // _startTimer();
   }
@@ -49,90 +49,92 @@ class _SingleproductviewState extends State<Singleproductview> {
         title: Text(widget.product.name),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          if (widget.product.imageUrl != null)
-            Image.network(widget.product.imageUrl!, height: 150, width: double.infinity, fit: BoxFit.cover),
-          SizedBox(height: 8),
-          Text(widget.product.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          SizedBox(height: 8),
-          Text(widget.product.description),
-          SizedBox(height: 8),
-          Text('Starting Price: \$${widget.product.startingPrice.toStringAsFixed(2)}'),
-          SizedBox(height: 8),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            if (widget.product.imageUrl != null)
+              Image.network(widget.product.imageUrl!, height: 150, width: double.infinity, fit: BoxFit.cover),
+            SizedBox(height: 8),
+            Text(widget.product.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            SizedBox(height: 8),
+            Text(widget.product.description),
+            SizedBox(height: 8),
+            Text('Starting Price: \$${widget.product.startingPrice.toStringAsFixed(2)}'),
+            SizedBox(height: 8),
 
-          StreamBuilder<DocumentSnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection("products")
-                .doc(widget.product.productId)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              }
+            StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection("products")
+                  .doc(widget.product.productId)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
 
-              if (!snapshot.hasData || !snapshot.data!.exists) {
-                return Center(child: Text('Product not found.'));
-              }
+                if (!snapshot.hasData || !snapshot.data!.exists) {
+                  return Center(child: Text('Product not found.'));
+                }
 
-              // Extract Firestore data
-              var productData = snapshot.data!.data() as Map<String, dynamic>;
-              double newPrice = (productData["currentPrice"] as num).toDouble();
+                // Extract Firestore data
+                var productData = snapshot.data!.data() as Map<String, dynamic>;
+                double newPrice = (productData["currentPrice"] as num).toDouble();
 
-              // Only update the UI if the price has changed
-              if (widget.product.currentPrice < newPrice) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  setState(() {
+                // Only update the UI if the price has changed
+                if (widget.product.currentPrice < newPrice) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
                     widget.product.currentPrice = newPrice;
-                    bidController.text = newPrice.toString();
+                    bidController.text = (newPrice+1).toString();
+                    // setState(() {
+                    //
+                    // });
                   });
-                });
-              }
+                }
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text('Current Price: \$${newPrice.toStringAsFixed(2)}'),
-                  SizedBox(height: 20),
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text('Current Price: \$${newPrice.toStringAsFixed(2)}'),
+                    SizedBox(height: 20),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 100,
-                        child: TextField(
-                          controller: bidController,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(hintText: "Enter bid"),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 100,
+                          child: TextField(
+                            controller: bidController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(hintText: "Enter bid"),
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: () async {
-                          double? bidAmount = double.tryParse(bidController.text);
-                          if (bidAmount == null) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(SnackBar(content: Text("Invalid bid amount")));
-                            return;
-                          }
+                        SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: () async {
+                            double? bidAmount = double.tryParse(bidController.text);
+                            if (bidAmount == null) {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(content: Text("Invalid bid amount")));
+                              return;
+                            }
 
-                          widget.product.placeBid(context, bidAmount);
-                        },
-                        child: Text("Bid"),
-                      ),
-                      SizedBox(width: 20),
-                    ],
-                  ),
-                ],
-              );
-            },
-          ),
-
+                            widget.product.placeBid(context, bidAmount);
+                          },
+                          child: Text("Bid"),
+                        ),
+                        SizedBox(width: 20),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            ),
 
 
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
+
+            StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('products')
                   .doc(widget.product.productId)
@@ -150,6 +152,8 @@ class _SingleproductviewState extends State<Singleproductview> {
                   var bidDocs = snapshot.data!.docs;
 
                   return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: bidDocs.length,
                     itemBuilder: (context, index) {
                       final bidData = bidDocs[index].data() as Map<String, dynamic>;
@@ -173,11 +177,11 @@ class _SingleproductviewState extends State<Singleproductview> {
 
 
               },
-            )
-          ),
+            ),
 
 
-        ],
+          ],
+        ),
       ),
     );
   }
