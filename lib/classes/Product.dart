@@ -9,6 +9,7 @@ class Product {
   final double startingPrice;
   double currentPrice;
   final String sellerId;
+  final String sellerName;
   final DateTime auctionStartTime;
   final DateTime auctionEndTime;
   final String? imageUrl;
@@ -22,6 +23,7 @@ class Product {
     required this.startingPrice,
     required this.currentPrice,
     required this.sellerId,
+    required this.sellerName,
     required this.auctionStartTime,
     required this.auctionEndTime,
     this.imageUrl,
@@ -121,6 +123,7 @@ class Product {
       'startingPrice': startingPrice,
       'currentPrice': currentPrice,
       'sellerId': sellerId,
+      'sellerName': sellerName,
       'auctionStartTime': auctionStartTime.toIso8601String(),
       'auctionEndTime': auctionEndTime.toIso8601String(),
       'imageUrl': imageUrl,
@@ -138,6 +141,7 @@ class Product {
       startingPrice: map['startingPrice'],
       currentPrice: map['currentPrice'],
       sellerId: map['sellerId'],
+      sellerName: map['sellerName'],
       auctionStartTime: DateTime.parse(map['auctionStartTime']),
       auctionEndTime: DateTime.parse(map['auctionEndTime']),
       imageUrl: map['imageUrl'],
@@ -155,6 +159,7 @@ class Product {
       startingPrice: data['startingPrice'],
       currentPrice: data['currentPrice'],
       sellerId: data['sellerId'],
+      sellerName: data['sellerName'],
       auctionStartTime: DateTime.parse(data['auctionStartTime']),
       auctionEndTime: DateTime.parse(data['auctionEndTime']),
       imageUrl: data['imageUrl'],

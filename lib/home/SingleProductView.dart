@@ -145,6 +145,11 @@ class _SingleproductviewState extends State<Singleproductview> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
+                else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Padding(
+                      padding: EdgeInsets.all(100.0),
+                      child: Text('No bidders available.')));
+                }
                 else if (snapshot.connectionState == ConnectionState.active){
 
                   QuerySnapshot data= snapshot.data as QuerySnapshot;
@@ -169,9 +174,7 @@ class _SingleproductviewState extends State<Singleproductview> {
                   );
                 }
 
-                else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(child: Text('No bidders available.'));
-                }
+
                 else
                   return const Center(child: Text('No bidders available.'));
 

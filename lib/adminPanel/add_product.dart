@@ -81,6 +81,7 @@ class _AddProductFormState extends State<AddProductForm> {
       _formKey.currentState!.save();
     //  await upload();
       await download();
+      String sellerName =  await FirebaseFirestore.instance.collection("Users").doc(FirebaseAuth.instance.currentUser!.uid).get().then((value) => value.get("name"));
 
       // Create a new product map
       final productData = {
@@ -89,6 +90,7 @@ class _AddProductFormState extends State<AddProductForm> {
         'startingPrice': _startingPrice,
         'currentPrice': _startingPrice, // Initially, current price = starting price
         'sellerId': _sellerId,
+        'sellerName': sellerName,
         'auctionStartTime': _auctionStartTime.toIso8601String(),
         'auctionEndTime': _auctionEndTime.toIso8601String(),
         'imageUrl': _imageUrl,

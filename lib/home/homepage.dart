@@ -174,6 +174,8 @@ class _ProductCardState extends State<ProductCard> {
               SizedBox(height: 8),
               Text(widget.product.description,style: TextStyle(fontWeight: FontWeight.w600),maxLines: 2,overflow: TextOverflow.ellipsis,),
               SizedBox(height: 8),
+              Text("Owner: ${widget.product.sellerName}"),
+              SizedBox(height: 8),
               Text('Starting Price: \$${widget.product.startingPrice.toStringAsFixed(2)}'),
               SizedBox(height: 8),
               Text('Current Price: \$${widget.product.currentPrice.toStringAsFixed(2)}'),
