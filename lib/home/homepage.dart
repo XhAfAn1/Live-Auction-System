@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:liveauctionsystem/adminPanel/add_product.dart';
+import 'package:liveauctionsystem/home/profile.dart';
 
 import '../classes/Product.dart';
 import '../firebase/Authentication.dart';
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage> {
         child: FutureBuilder<DocumentSnapshot>(
           future: FirebaseFirestore.instance
               .collection("Users")
-              .doc(FirebaseAuth.instance.currentUser?.uid) // Use the logged-in user's ID
+              .doc(FirebaseAuth.instance.currentUser?.uid)
               .get(),
 
           builder: (context, snapshot) {
@@ -41,40 +42,59 @@ class _HomePageState extends State<HomePage> {
               return CircleAvatar(
                 radius: 30,
                 backgroundColor: Colors.grey[300],
-                child: CircularProgressIndicator(), // Show a loading indicator
+                child: CircularProgressIndicator(),
               );
             }
 
             if (!snapshot.hasData || !snapshot.data!.exists) {
-              return CircleAvatar(
-                radius: 30,
-                backgroundColor: Colors.grey[300],
-                child: Icon(Icons.person, size: 30, color: Colors.white), // Default icon
+              return InkWell(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => profile(uid: FirebaseAuth.instance.currentUser!.uid,),));
+                },
+                child: CircleAvatar(
+                  radius: 30,
+                  backgroundColor: Colors.grey[300],
+                  child: Icon(Icons.person, size: 30, color: Colors.white),
+                ),
               );
             }
 
-            // Fetch profile image URL from Firestore
-            String? imageUrl = snapshot.data!.get("profileImageUrl"); // Ensure field exists
+            String? imageUrl = snapshot.data!.get("profileImageUrl");
 
-            return CircleAvatar(
-              radius: 30,
-              backgroundImage: (imageUrl != null && imageUrl.isNotEmpty)
-                  ? NetworkImage(imageUrl)
-                  : null,
-              backgroundColor: Colors.grey[300],
-              child: (imageUrl == null || imageUrl.isEmpty)
-                  ? Icon(Icons.person, size: 30, color: Colors.white)
-                  : null,
+            return InkWell(
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => profile(uid: FirebaseAuth.instance.currentUser!.uid,),));
+              },
+              child: CircleAvatar(
+                radius: 30,
+                backgroundImage: (imageUrl != null && imageUrl.isNotEmpty)
+                    ? NetworkImage(imageUrl)
+                    : null,
+                backgroundColor: Colors.grey[300],
+                child: (imageUrl == null || imageUrl.isEmpty)
+                    ? Icon(Icons.person, size: 30, color: Colors.white)
+                    : null,
+              ),
             );
           },
         ),
       ),
+          SizedBox(width: 10,),
+          IconButton(onPressed: (){
+            Authentication().signout(context);
+          }, icon: Icon(Icons.logout)),
+          SizedBox(height: 20,),
 
           Container(
             width: 20,
           )
         ],
       ),
+
+      floatingActionButton:ElevatedButton(onPressed: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => AddProductForm(),));
+      }, child: Text("Add Product")) ,
+
       body:Column(
         children: [
           Expanded(
@@ -101,14 +121,14 @@ class _HomePageState extends State<HomePage> {
               },
             ),
           ),
-          ElevatedButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => AddProductForm(),));
-          }, child: Text("Add Product")),
-          SizedBox(height: 20,),
-          ElevatedButton(onPressed: () {
-            Authentication().signout(context);
-          }, child: Text("Logout")),
-          SizedBox(height: 20,)
+          // ElevatedButton(onPressed: () {
+          //   Navigator.push(context, MaterialPageRoute(builder: (context) => AddProductForm(),));
+          // }, child: Text("Add Product")),
+          // SizedBox(height: 20,),
+          // ElevatedButton(onPressed: () {
+          //   Authentication().signout(context);
+          // }, child: Text("Logout")),
+          // SizedBox(height: 20,)
 
         ],
       )
@@ -188,7 +208,3 @@ class _ProductCardState extends State<ProductCard> {
     );
   }
 }
-// ElevatedButton(onPressed: (){
-// Authentication().signout(context);
-// }, child: Text("Logout")),
-// SizedBox(height: 20,)
