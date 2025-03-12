@@ -1,1 +1,39 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"live-auction-system-26b33","appId":"1:443378336257:android:aa14309f688a60dbd3b600","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"live-auction-system-26b33","configurations":{"android":"1:443378336257:android:aa14309f688a60dbd3b600","web":"1:443378336257:web:e17b2b0b25099b58d3b600","windows":"1:443378336257:web:73eb350281e91098d3b600"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "live-auction-system-26b33",
+          "appId": "1:443378336257:android:aa14309f688a60dbd3b600",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "live-auction-system-26b33",
+          "configurations": {
+            "android": "1:443378336257:android:aa14309f688a60dbd3b600",
+            "web": "1:443378336257:web:e17b2b0b25099b58d3b600",
+            "windows": "1:443378336257:web:73eb350281e91098d3b600"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ]
+}
