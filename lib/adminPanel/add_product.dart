@@ -54,7 +54,7 @@ class _AddProductFormState extends State<AddProductForm> {
 
 
 
-  Future<void> _selectDate(BuildContext context, bool isStartTime) async {
+   _selectDate(BuildContext context, bool isStartTime) async {
 
     final DateTime initialDate = isStartTime ? _auctionStartTime : _auctionEndTime;
 
@@ -67,31 +67,34 @@ class _AddProductFormState extends State<AddProductForm> {
     );
 
     if (pickedDate != null) {
-
-      final TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.fromDateTime(initialDate),
-      );
-
-      if (pickedTime != null) {
-        // Combine date and time
-        final DateTime combinedDateTime = DateTime(
-          pickedDate.year,
-          pickedDate.month,
-          pickedDate.day,
-          pickedTime.hour,
-          pickedTime.minute,
-        );
-
-          if (isStartTime) {
-            _auctionStartTime = combinedDateTime;
-          } else {
-            _auctionEndTime = combinedDateTime;
-          }
-
-      }
+      _selectTime(context, isStartTime,pickedDate,initialDate);
     }
     print(_auctionStartTime);
+  }
+  _selectTime(BuildContext context, bool isStartTime,DateTime pickedDate,DateTime initialDate ) async{
+
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(initialDate),
+    );
+
+    if (pickedTime != null) {
+
+      final DateTime combinedDateTime = DateTime(
+        pickedDate.year,
+        pickedDate.month,
+        pickedDate.day,
+        pickedTime.hour,
+        pickedTime.minute,
+      );
+
+      if (isStartTime) {
+        _auctionStartTime = combinedDateTime;
+      } else {
+        _auctionEndTime = combinedDateTime;
+      }
+
+    }
   }
 
 

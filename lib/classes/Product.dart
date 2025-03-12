@@ -32,8 +32,8 @@ class Product {
   });
 
   // Method to place a bid
-  Future<void> placeBid(context,double bidPrice) async {
-    if(bidPrice>currentPrice){
+  Future<void> placeBid(context,double bidPrice,String status) async {
+    if(bidPrice>currentPrice && status=='active'){
       try {
         String userId = FirebaseAuth.instance.currentUser!.uid;
 
@@ -75,8 +75,11 @@ class Product {
         print("Error placing bid: $e");
       }
     }
-    else if(bidPrice<=currentPrice){
+    else if(bidPrice<=currentPrice && status=='active'){
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Bid Price must be higher")));
+    }
+    else if(status=='ended'){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Auction has ended")));
     }
   }
 

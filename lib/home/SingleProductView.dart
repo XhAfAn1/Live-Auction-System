@@ -114,7 +114,7 @@ class _SingleproductviewState extends State<Singleproductview> {
                               return;
                             }
 
-                            widget.product.placeBid(context, bidAmount);
+                            widget.product.placeBid(context, bidAmount, widget.product.status);
                           },
                           child: Text("Bid"),
                         ),
