@@ -28,10 +28,6 @@ class _AddProductFormState extends State<AddProductForm> {
       image=File(pic!.path);
     });
   }
-  upload()async{
-    path=basename(image!.path);
-    supabase.storage.from("itemPhotos").upload(path,image!).then((value) => print("done"));
-  }
   download() async{
    // path=basename(image!.path);
     path=DateTime.now().toString();
@@ -56,24 +52,49 @@ class _AddProductFormState extends State<AddProductForm> {
   String _imageUrl = '';
   String _category = '';
 
-  // Date picker for auction start and end times
+
+
   Future<void> _selectDate(BuildContext context, bool isStartTime) async {
-    final DateTime? picked = await showDatePicker(
+
+    final DateTime initialDate = isStartTime ? _auctionStartTime : _auctionEndTime;
+
+
+    final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: isStartTime ? _auctionStartTime : _auctionEndTime,
+      initialDate: initialDate,
       firstDate: DateTime.now(),
       lastDate: DateTime(2101),
     );
-    if (picked != null) {
-      setState(() {
-        if (isStartTime) {
-          _auctionStartTime = picked;
-        } else {
-          _auctionEndTime = picked;
-        }
-      });
+
+    if (pickedDate != null) {
+
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(initialDate),
+      );
+
+      if (pickedTime != null) {
+        // Combine date and time
+        final DateTime combinedDateTime = DateTime(
+          pickedDate.year,
+          pickedDate.month,
+          pickedDate.day,
+          pickedTime.hour,
+          pickedTime.minute,
+        );
+
+          if (isStartTime) {
+            _auctionStartTime = combinedDateTime;
+          } else {
+            _auctionEndTime = combinedDateTime;
+          }
+
+      }
     }
+    print(_auctionStartTime);
   }
+
+
 
   // Submit form
   void _submitForm(context) async {
@@ -178,13 +199,13 @@ class _AddProductFormState extends State<AddProductForm> {
                 onSaved: (value) => _category = value!,
               ),
               SizedBox(height: 16),
-              Text('Auction Start Time: ${DateFormat('yyyy-MM-dd').format(_auctionStartTime)}'),
+              Text('Auction Start Time: ${DateFormat('yyyy-MM-dd').format(_auctionStartTime)}- ${DateFormat('HH:mm').format(_auctionStartTime)}'),
               ElevatedButton(
                 onPressed: () => _selectDate(context, true),
                 child: Text('Select Start Date'),
               ),
               SizedBox(height: 16),
-              Text('Auction End Time: ${DateFormat('yyyy-MM-dd').format(_auctionEndTime)}'),
+              Text('Auction End Time: ${DateFormat('yyyy-MM-dd').format(_auctionEndTime)}- ${DateFormat('HH:mm').format(_auctionEndTime)}'),
               ElevatedButton(
                 onPressed: () => _selectDate(context, false),
                 child: Text('Select End Date'),
