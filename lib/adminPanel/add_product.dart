@@ -1,11 +1,12 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'package:path/path.dart';
 
 import '../home/homepage.dart';
@@ -18,7 +19,6 @@ class AddProductForm extends StatefulWidget {
 }
 
 class _AddProductFormState extends State<AddProductForm> {
-  SupabaseClient supabase= Supabase.instance.client;
   File? image;
   String path="";
   String url="";
@@ -29,14 +29,24 @@ class _AddProductFormState extends State<AddProductForm> {
     });
   }
   download() async{
-   // path=basename(image!.path);
-    path=DateTime.now().toString();
-    supabase.storage.from("itemPhotos").upload(path,image!).then((value) => print("done"));
-    url=await supabase.storage.from("itemPhotos").getPublicUrl(path);
-    print(url);
-    setState(() {
-      _imageUrl=url;
-    });
+    try {
+
+      //path=DateTime.now().toString();
+      path = 'itemPhoto/${DateTime
+          .now()
+          .millisecondsSinceEpoch}.jpeg';
+
+      await FirebaseStorage.instance.ref(path).putFile(image!);
+      url = await FirebaseStorage.instance.ref(path).getDownloadURL();
+
+      print(url);
+      setState(() {
+        _imageUrl = url;
+      });
+    }catch(e){
+      print("3");
+      print(e);
+    }
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -192,7 +202,7 @@ class _AddProductFormState extends State<AddProductForm> {
                 getImage();
               }, child: Text("select photo")),
               // ElevatedButton(onPressed: (){
-              //   upload();
+              //   download();
               // }, child: Text("upload")),
               // ElevatedButton(onPressed: () {
               //   download();

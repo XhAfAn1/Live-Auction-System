@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:liveauctionsystem/classes/user.dart';
 import 'package:liveauctionsystem/login%20signup/login.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../firebase/Authentication.dart';
 
 class signup extends StatefulWidget {
@@ -36,19 +36,20 @@ class _signupState extends State<signup> {
 
     try{
       final credential= await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email.text.trim(),password: password.text.trim());
-      path=DateTime.now().toString();
-      print("1");
+      path = 'UserPhotos/${DateTime
+          .now()
+          .millisecondsSinceEpoch}.jpeg';
+
       if(image!=null){
-        Supabase.instance.client.storage.from("UserPhotos").upload(path,image!);
-        url=await Supabase.instance.client.storage.from("UserPhotos").getPublicUrl(path);
-        print("2");
+        await FirebaseStorage.instance.ref(path).putFile(image!);
+        url = await FirebaseStorage.instance.ref(path).getDownloadURL();
       }
-      print("3");
+
       UserModel newUser=UserModel(id: credential.user!.uid, name: name.text, email: email.text, profileImageUrl: url);
       await FirebaseFirestore.instance.collection("Users").doc(credential.user!.uid).set(newUser.toJson());
       await Authentication().signout(context);
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => login(),));
-      print("4");
+
     }on FirebaseAuthException catch (e){
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text( e.code.toString())) );
     }

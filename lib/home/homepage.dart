@@ -200,6 +200,8 @@ class _ProductCardState extends State<ProductCard> {
               SizedBox(height: 8),
               Text('Current Price: \$${widget.product.currentPrice.toStringAsFixed(2)}'),
               SizedBox(height: 8),
+              Text('Status: ${widget.product.status}'),
+              SizedBox(height: 8),
               Text('Time Remaining: ${widget.product.formatRemainingTime(_remainingTime)}'),
             ],
           ),
