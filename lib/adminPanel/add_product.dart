@@ -7,7 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
-import 'package:path/path.dart';
+//import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../home/homepage.dart';
 
@@ -22,6 +22,7 @@ class _AddProductFormState extends State<AddProductForm> {
   File? image;
   String path="";
   String url="";
+  String url2="";
   getImage() async{
     var pic=await ImagePicker().pickImage(source: ImageSource.gallery);
     setState(() {
