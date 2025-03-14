@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,7 +23,8 @@ class _AddProductFormState extends State<AddProductForm> {
   File? image;
   String path="";
   String url="";
-  String url2="";
+  String btn_test="Add Product";
+
   getImage() async{
     var pic=await ImagePicker().pickImage(source: ImageSource.gallery);
     setState(() {
@@ -100,9 +102,15 @@ class _AddProductFormState extends State<AddProductForm> {
       );
 
       if (isStartTime) {
-        _auctionStartTime = combinedDateTime;
+        setState(() {
+          _auctionStartTime = combinedDateTime;
+        });
+
       } else {
-        _auctionEndTime = combinedDateTime;
+        setState(() {
+          _auctionEndTime = combinedDateTime;
+        });
+
       }
 
     }
@@ -145,6 +153,13 @@ class _AddProductFormState extends State<AddProductForm> {
       // Clear the form
       _formKey.currentState!.reset();
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(),));
+    }
+    else{
+      Timer(Duration(milliseconds: 50), () {
+        setState(() {
+          btn_test="Add Product";
+        });
+      });
     }
   }
 
@@ -227,9 +242,12 @@ class _AddProductFormState extends State<AddProductForm> {
               SizedBox(height: 24),
               ElevatedButton(
                 onPressed: (){
+                  setState(() {
+                    btn_test="Uploading...";
+                  });
                   _submitForm(context);
                 },
-                child: Text('Add Product'),
+                child: Text(btn_test),
               ),
             ],
           ),

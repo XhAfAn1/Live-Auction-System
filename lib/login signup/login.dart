@@ -1,14 +1,26 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:liveauctionsystem/home/homepage.dart';
 import 'package:liveauctionsystem/login%20signup/signup.dart';
 
 import '../firebase/Authentication.dart';
 
-class login extends StatelessWidget {
+class login extends StatefulWidget {
   const login({super.key});
 
   @override
+  State<login> createState() => _loginState();
+}
+
+class _loginState extends State<login> {
+  String btn_text="Log in";
+  bool isloading=false;
+  @override
   Widget build(BuildContext context) {
+
+
+
     TextEditingController email = TextEditingController();
     TextEditingController password = TextEditingController();
     return Scaffold(
@@ -52,10 +64,23 @@ class login extends StatelessWidget {
                   shape: BeveledRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.zero)),
                   backgroundColor: Colors.blueAccent),
-              onPressed: () {
-               Authentication().signin(email: email.text, password: password.text,context: context);
+              onPressed: () async{
+
+                setState(() {
+                  btn_text="Logging in...";
+                });
+               isloading=await Authentication().signin(email: email.text, password: password.text,context: context);
+
+              if(!isloading){
+                Timer(Duration(milliseconds: 50), () {
+                  setState(() {
+                    btn_text="Log in";
+                  });
+                });
+              }
+
               },
-              child: Text("login",
+              child: Text(btn_text,
                   style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

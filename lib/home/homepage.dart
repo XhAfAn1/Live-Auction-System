@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               
-             // stream: _firestore.collection('products').where("status",isEqualTo: "active").orderBy("auctionEndTime",descending: false).snapshots(),
+              //stream: _firestore.collection('products').where("status",isEqualTo: "active").orderBy("auctionEndTime",descending: false).snapshots(),
               stream: _firestore.collection('products').orderBy("auctionEndTime",descending: false).snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {

@@ -18,6 +18,7 @@ class signup extends StatefulWidget {
 }
 
 class _signupState extends State<signup> {
+  String btn_text="Sign Up";
   File? image;
   String path="";
   String url="";
@@ -51,9 +52,16 @@ class _signupState extends State<signup> {
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => login(),));
 
     }on FirebaseAuthException catch (e){
+      setState(() {
+        btn_text="Sign Up";
+      });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text( e.code.toString())) );
     }
     catch(e){
+
+      setState(() {
+        btn_text="Sign Up";
+      });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text( e.toString())) );
       print(e);
     }
@@ -221,9 +229,12 @@ class _signupState extends State<signup> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                 onPressed: (){
+                  setState(() {
+                    btn_text="Loading...";
+                  });
                 createAccount(context);
                 },
-                child: Text("Sign Up",style: TextStyle(color: Colors.white),),
+                child: Text(btn_text,style: TextStyle(color: Colors.white),),
               ),
             ],
           ),

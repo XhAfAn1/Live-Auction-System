@@ -10,7 +10,7 @@ class Authentication {
 
 
 
-  Future<void> signin(
+  Future<bool> signin(
       {required String email, required String password,context}) async {
     try{
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
@@ -24,23 +24,19 @@ class Authentication {
     } on FirebaseAuthException catch (e){
       if(e.code=='user-not-found'){
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text( e.code.toString())) );
-        print(e.code);
+        return false;
       }
       else if(e.code=='wrong-password'){
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text( e.code.toString())) );
-        print(e.code);
+        return false;
       }
       else if(e.code=='invalid-email'){
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text( e.code.toString())) );
-        print(e.code);
-      }
-      else if(e.code=='user-disabled'){
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text( e.code.toString())) );
-        print(e.code);
+        return false;
       }
       else{
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text( e.code.toString())) );
-        print(e.code);
+        return false;
       }
 
 
@@ -48,8 +44,9 @@ class Authentication {
     }
     catch(e){
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text( e.toString())) );
-      print(e);
+      return false;
     }
+    return true;
   }
 
   Future<void> signout(context) async {
