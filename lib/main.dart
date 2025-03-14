@@ -13,7 +13,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  monitorAuctionStatus();
+ // monitorAuctionStatus();
   runApp(MyApp());
 }
 
@@ -29,16 +29,15 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-void monitorAuctionStatus() {
-  Timer.periodic(Duration(seconds: 1), (timer) async {
+void monitorAuctionStatus() async{
+  // Fetch active auctions
+  QuerySnapshot auctions = await FirebaseFirestore.instance
+      .collection('products')
+      .where('status', isEqualTo: 'active')
+      .get();
+  Timer.periodic(Duration(seconds: 1), (timer) async{
     // Get current time
     DateTime now = DateTime.now();
-
-    // Fetch active auctions
-    QuerySnapshot auctions = await FirebaseFirestore.instance
-        .collection('products')
-        .where('status', isEqualTo: 'active')
-        .get();
 
     for (var auction in auctions.docs) {
       DateTime endTime = DateTime.parse(auction['auctionEndTime']);

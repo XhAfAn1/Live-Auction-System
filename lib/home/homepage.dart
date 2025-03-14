@@ -8,6 +8,7 @@ import 'package:liveauctionsystem/home/profile.dart';
 
 import '../classes/Product.dart';
 import '../firebase/Authentication.dart';
+import '../main.dart';
 import 'SingleProductView.dart';
 
 class HomePage extends StatefulWidget {
@@ -99,18 +100,26 @@ class _HomePageState extends State<HomePage> {
         children: [
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: _firestore.collection('products').snapshots(),
+              
+             // stream: _firestore.collection('products').where("status",isEqualTo: "active").orderBy("auctionEndTime",descending: false).snapshots(),
+              stream: _firestore.collection('products').orderBy("auctionEndTime",descending: false).snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 }
-            
+
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return Center(child: Text('No products available.'));
                 }
-            
                 final products = snapshot.data!.docs.map((doc) => Product.fromFirestore(doc)).toList();
-            
+
+
+
+
+
+                monitorAuctionStatus();
+
+
                 return ListView.builder(
                   itemCount: products.length,
                   itemBuilder: (context, index) {
@@ -121,14 +130,6 @@ class _HomePageState extends State<HomePage> {
               },
             ),
           ),
-          // ElevatedButton(onPressed: () {
-          //   Navigator.push(context, MaterialPageRoute(builder: (context) => AddProductForm(),));
-          // }, child: Text("Add Product")),
-          // SizedBox(height: 20,),
-          // ElevatedButton(onPressed: () {
-          //   Authentication().signout(context);
-          // }, child: Text("Logout")),
-          // SizedBox(height: 20,)
 
         ],
       )

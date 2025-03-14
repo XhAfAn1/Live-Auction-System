@@ -20,5 +20,9 @@
   "bugs": {
     "url": "https://github.com/XhAfAn1/Live-Auction-System/issues"
   },
-  "homepage": "https://github.com/XhAfAn1/Live-Auction-System#readme"
+  "homepage": "https://github.com/XhAfAn1/Live-Auction-System#readme",
+  "dependencies": {
+    "firebase-admin": "^13.2.0",
+    "firebase-functions": "^6.3.2"
+  }
 }
