@@ -9,6 +9,8 @@ class Product {
   final double startingPrice;
   double currentPrice;
   final String sellerId;
+  final String highBidderId;
+  final String highBidderName;
   final String sellerName;
   final DateTime auctionStartTime;
   final DateTime auctionEndTime;
@@ -16,7 +18,7 @@ class Product {
   final String? category;
   String status;
 
-  Product({
+  Product( {
     required this.productId,
     required this.name,
     required this.description,
@@ -24,6 +26,8 @@ class Product {
     required this.currentPrice,
     required this.sellerId,
     required this.sellerName,
+    required this.highBidderId,
+    required this.highBidderName,
     required this.auctionStartTime,
     required this.auctionEndTime,
     this.imageUrl,
@@ -67,6 +71,10 @@ class Product {
         FirebaseFirestore.instance
             .collection('products')
             .doc(productId).update({"currentPrice":bidPrice});
+
+        FirebaseFirestore.instance
+            .collection('products')
+            .doc(productId).update({"highBidderName":userName,"highBidderId":userId});
 
         currentPrice=bidPrice;
 
@@ -128,6 +136,8 @@ class Product {
       'currentPrice': currentPrice,
       'sellerId': sellerId,
       'sellerName': sellerName,
+      'highBidderId': highBidderId,
+      'highBidderName': highBidderName,
       'auctionStartTime': auctionStartTime.toIso8601String(),
       'auctionEndTime': auctionEndTime.toIso8601String(),
       'imageUrl': imageUrl,
@@ -146,6 +156,8 @@ class Product {
       currentPrice: map['currentPrice'],
       sellerId: map['sellerId'],
       sellerName: map['sellerName'],
+      highBidderName: map['highBidderName'],
+      highBidderId: map['highBidderId'],
       auctionStartTime: DateTime.parse(map['auctionStartTime']),
       auctionEndTime: DateTime.parse(map['auctionEndTime']),
       imageUrl: map['imageUrl'],
@@ -164,6 +176,8 @@ class Product {
       currentPrice: data['currentPrice'],
       sellerId: data['sellerId'],
       sellerName: data['sellerName'],
+      highBidderName: data['highBidderName'],
+      highBidderId: data['highBidderId'],
       auctionStartTime: DateTime.parse(data['auctionStartTime']),
       auctionEndTime: DateTime.parse(data['auctionEndTime']),
       imageUrl: data['imageUrl'],

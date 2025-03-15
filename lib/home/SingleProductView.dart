@@ -90,6 +90,8 @@ class _SingleproductviewState extends State<Singleproductview> {
                   children: [
                   //  Text("Remaining Time: ${_remainingTime ~/ 3600}h ${(_remainingTime % 3600) ~/ 60}m ${_remainingTime % 60}s"),
                     Text('Current Price: \$${newPrice.toStringAsFixed(2)}'),
+                    SizedBox(height: 8),
+                    Text('Top Bidder: ${productData["highBidderName"]}'),
                     SizedBox(height: 20),
 
                     Row(
@@ -221,6 +223,11 @@ class _timerState extends State<timer> {
   }
   @override
   Widget build(BuildContext context) {
-    return  Text('Time Remaining: ${widget.product.formatRemainingTime(_remainingTime)}',style: TextStyle(fontWeight: FontWeight.w700),);
+    return Column(
+      children: [
+    Text('Time Remaining: ${widget.product.formatRemainingTime(_remainingTime)}',style: TextStyle(fontWeight: FontWeight.w700),)
+
+    ],
+    );
   }
 }

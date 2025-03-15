@@ -39,7 +39,11 @@ final String uid;
                     SizedBox(height: 20,),
                     CircleAvatar(
                       radius: 80,
-                      backgroundImage: NetworkImage(user.profileImageUrl),
+                      backgroundImage: user.profileImageUrl!="" ? NetworkImage(user.profileImageUrl):null,
+                      backgroundColor: Colors.grey[300],
+                      child: (user.profileImageUrl == "" )
+                          ? Icon(Icons.person, size: 70, color: Colors.white)
+                          : null,
                     ),
                     SizedBox(height: 20,),
                     Text("Name: ${user.name}"),
