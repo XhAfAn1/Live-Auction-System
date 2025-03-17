@@ -60,6 +60,8 @@ class _AddProductFormState extends State<AddProductForm> {
   String _description = '';
   double _startingPrice = 0.0;
   String _sellerId =   FirebaseAuth.instance.currentUser!.uid;
+  String highBidderId =   "";
+  String highBidderName =   "";
   DateTime _auctionStartTime = DateTime.now();
   DateTime _auctionEndTime = DateTime.now().add(Duration(days: 7));
   String _imageUrl = '';
@@ -133,6 +135,8 @@ class _AddProductFormState extends State<AddProductForm> {
         'startingPrice': _startingPrice,
         'currentPrice': _startingPrice, // Initially, current price = starting price
         'sellerId': _sellerId,
+        'highBidderId': highBidderId,
+        'highBidderName': highBidderName,
         'sellerName': sellerName,
         'auctionStartTime': _auctionStartTime.toIso8601String(),
         'auctionEndTime': _auctionEndTime.toIso8601String(),
@@ -140,7 +144,7 @@ class _AddProductFormState extends State<AddProductForm> {
         'category': _category,
         'status': 'active',
       };
-
+      print("1");
       // Add product to Firestore
     //  await _firestore.collection('products').add(productData);
       await _firestore.collection('products').doc(DateTime.now().toString()).set(productData);

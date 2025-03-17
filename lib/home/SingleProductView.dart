@@ -47,6 +47,9 @@ class _SingleproductviewState extends State<Singleproductview> {
             Text(widget.product.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             SizedBox(height: 8),
             Text(widget.product.description),
+            // ElevatedButton(onPressed: (){
+            //   showDiag(context,widget.product.highBidderName,widget.product.currentPrice.toString());
+            // }, child: Text("test_btn")),
             SizedBox(height: 8),
             timer(product: widget.product),
             SizedBox(height: 8),
@@ -152,6 +155,10 @@ class _SingleproductviewState extends State<Singleproductview> {
                   var msg=data.docs[0];
                   var bidDocs = snapshot.data!.docs;
 
+                         //status update test
+                  statuscheck(widget.product.productId,context);
+
+
                   return ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -184,7 +191,59 @@ class _SingleproductviewState extends State<Singleproductview> {
       ),
     );
   }
+  statuscheck(String id, BuildContext context) {
+    Timer.periodic(Duration(seconds: 1), (timer) async {
+      try {
+        DateTime now = DateTime.now();
+        DocumentSnapshot auction = await FirebaseFirestore.instance
+            .collection('products')
+            .doc(id)
+            .get();
 
+
+        DateTime endTime = DateTime.parse(auction['auctionEndTime']);
+
+
+        if (now.isAfter(endTime) && auction['status'] != 'ended') {
+          await auction.reference.update({'status': 'ended'});
+          print('Auction ${auction.id} has ended.');
+
+          setState(() {
+            widget.product.status='ended';
+          });
+
+          showDiag(context,widget.product.highBidderName,widget.product.currentPrice.toString());
+          
+          timer.cancel();
+        }
+      } catch (e) {
+        print('Error in statusCheck: $e');
+        timer.cancel();
+      }
+    });
+  }
+  
+  showDiag(context,String name,String price){
+    showDialog(context: context,
+      builder: (context) =>
+          AlertDialog(
+            title: Text(
+              'Sold to ${name} at \$${price}',
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+    );
+
+
+
+  }
 }
 
 class timer extends StatefulWidget {
@@ -216,18 +275,23 @@ class _timerState extends State<timer> {
       });
     });
   }
+
   @override
   void dispose() {
     _timer.cancel();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-    Text('Time Remaining: ${widget.product.formatRemainingTime(_remainingTime)}',style: TextStyle(fontWeight: FontWeight.w700),)
+        Text('Time Remaining: ${widget.product.formatRemainingTime(
+            _remainingTime)}', style: TextStyle(fontWeight: FontWeight.w700),)
 
-    ],
+      ],
     );
   }
+
+
 }
