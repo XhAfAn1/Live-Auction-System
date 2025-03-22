@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:ffi';
+
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -158,18 +158,27 @@ class _SingleproductviewState extends State<Singleproductview> {
                          //status update test
                   statuscheck(widget.product.productId,context);
 
+                  
 
                   return ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: bidDocs.length,
                     itemBuilder: (context, index) {
-                      final bidData = bidDocs[index].data() as Map<String, dynamic>;
+                      var bidData = bidDocs[index].data() as Map<String, dynamic>;
                       final name = bidData["name"] ?? "No name found";
+                      var email = bidData["email"] ?? "No email found";
+
+
                       final bidAmount = bidData["bid"] ?? 0.0;
 
+
+                      
+                      
+
+
                       return ListTile(
-                        title: Text(name, style: const TextStyle(color: Colors.black)),
+                        title: Text('$name:  $email', style: const TextStyle(color: Colors.black)),
                         subtitle: Text('\$${bidAmount.toStringAsFixed(2)}',
                             style: const TextStyle(color: Colors.grey)),
                       );
@@ -191,6 +200,8 @@ class _SingleproductviewState extends State<Singleproductview> {
       ),
     );
   }
+
+
   statuscheck(String id, BuildContext context) {
     Timer.periodic(Duration(seconds: 1), (timer) async {
       try {
@@ -213,7 +224,7 @@ class _SingleproductviewState extends State<Singleproductview> {
           });
 
           showDiag(context,widget.product.highBidderName,widget.product.currentPrice.toString());
-          
+
           timer.cancel();
         }
       } catch (e) {
@@ -222,7 +233,7 @@ class _SingleproductviewState extends State<Singleproductview> {
       }
     });
   }
-  
+
   showDiag(context,String name,String price){
     showDialog(context: context,
       builder: (context) =>
