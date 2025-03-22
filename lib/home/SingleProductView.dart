@@ -158,7 +158,7 @@ class _SingleproductviewState extends State<Singleproductview> {
                          //status update test
                   statuscheck(widget.product.productId,context);
 
-                  
+
 
                   return ListView.builder(
                     shrinkWrap: true,
@@ -168,20 +168,20 @@ class _SingleproductviewState extends State<Singleproductview> {
                       var bidData = bidDocs[index].data() as Map<String, dynamic>;
                       final name = bidData["name"] ?? "No name found";
                       var email = bidData["email"] ?? "No email found";
-
-
                       final bidAmount = bidData["bid"] ?? 0.0;
 
-
-                      
-                      
+                      email=func(email,bidData,index);
 
 
-                      return ListTile(
-                        title: Text('$name:  $email', style: const TextStyle(color: Colors.black)),
-                        subtitle: Text('\$${bidAmount.toStringAsFixed(2)}',
-                            style: const TextStyle(color: Colors.grey)),
-                      );
+
+                      return FutureBuilder(future: func(email,bidData,index), builder: (context, snapshot) {
+                        email=snapshot.data ?? "Loading..";
+                       return ListTile(
+                          title: Text('$name:  $email', style: const TextStyle(color: Colors.black)),
+                          subtitle: Text('\$${bidAmount.toStringAsFixed(2)}',
+                              style: const TextStyle(color: Colors.grey)),
+                        );
+                      },);
                     },
                   );
                 }
@@ -201,6 +201,17 @@ class _SingleproductviewState extends State<Singleproductview> {
     );
   }
 
+  func(email,bidData,index)async{
+    try {
+
+      email=await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(bidData["uid"])
+          .get();
+      print('${email.data()!["name"]} $index');
+      return '${email.data()!["email"]}';
+    }catch(e){}
+  }
 
   statuscheck(String id, BuildContext context) {
     Timer.periodic(Duration(seconds: 1), (timer) async {

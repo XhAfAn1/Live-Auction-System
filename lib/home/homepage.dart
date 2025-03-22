@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:liveauctionsystem/adminPanel/add_product.dart';
 import 'package:liveauctionsystem/home/profile.dart';
 
@@ -120,7 +121,11 @@ class _HomePageState extends State<HomePage> {
                 monitorAuctionStatus();
 
 
-                return ListView.builder(
+                return MasonryGridView.builder(
+                  gridDelegate:
+                  SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 1,
+                  ),
                   itemCount: products.length,
                   itemBuilder: (context, index) {
                     final product = products[index];
@@ -186,10 +191,17 @@ class _ProductCardState extends State<ProductCard> {
         child: Padding(
           padding: EdgeInsets.all(16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          //  crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (widget.product.imageUrl != null)
-                Image.network(widget.product.imageUrl!, height: 150, width: double.infinity, fit: BoxFit.cover),
+                Container(
+                   height: 250,
+                  // width: 400,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(image:  NetworkImage(widget.product.imageUrl!,),fit: BoxFit.cover)
+                  ),
+                ),
+              //  Image.network(widget.product.imageUrl!, height: 150, width: double.infinity, fit: BoxFit.cover),
               SizedBox(height: 8),
               Text(widget.product.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               SizedBox(height: 8),
