@@ -101,6 +101,7 @@ class _SingleproductviewState extends State<Singleproductview> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        if(widget.product.auctionStartTime.isBefore(DateTime.now()))
                         Container(
                           width: 100,
                           child: TextField(
@@ -110,6 +111,7 @@ class _SingleproductviewState extends State<Singleproductview> {
                           ),
                         ),
                         SizedBox(width: 10),
+                        if(widget.product.auctionStartTime.isBefore(DateTime.now()))
                         ElevatedButton(
                           onPressed: () async {
                             double? bidAmount = double.tryParse(bidController.text);
@@ -222,8 +224,18 @@ class _SingleproductviewState extends State<Singleproductview> {
             .doc(id)
             .get();
 
-
         DateTime endTime = DateTime.parse(auction['auctionEndTime']);
+
+        DateTime startTime = DateTime.parse(auction['auctionStartTime']);
+
+
+        if(startTime.isBefore(now) && auction['status'] == 'upcoming'){
+          await auction.reference.update({'status': 'active'});
+
+          setState(() {
+            widget.product.status='active';
+          });
+        }
 
 
         if (now.isAfter(endTime) && auction['status'] != 'ended') {
@@ -289,6 +301,7 @@ class _timerState extends State<timer> {
 
   void _startTimer() {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+
       setState(() {
         _remainingTime = widget.product.getRemainingTime();
         if (_remainingTime <= 0) {
@@ -308,8 +321,12 @@ class _timerState extends State<timer> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        if(widget.product.auctionStartTime.isBefore(DateTime.now()))
         Text('Time Remaining: ${widget.product.formatRemainingTime(
             _remainingTime)}', style: TextStyle(fontWeight: FontWeight.w700),)
+        else
+          Text('Auction has not Started yet', style: TextStyle(fontWeight: FontWeight.w700),)
+
 
       ],
     );

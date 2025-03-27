@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:liveauctionsystem/adminPanel/add_product.dart';
 import 'package:liveauctionsystem/home/profile.dart';
 
@@ -20,124 +19,251 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+  }
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text('Auction Products'),
-        actions: [
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            title: Text('Auction Products'),
+            actions: [
 
-      Container(
-        child: FutureBuilder<DocumentSnapshot>(
-          future: FirebaseFirestore.instance
-              .collection("Users")
-              .doc(FirebaseAuth.instance.currentUser?.uid)
-              .get(),
+              Container(
+                child: FutureBuilder<DocumentSnapshot>(
+                  future: FirebaseFirestore.instance
+                      .collection("Users")
+                      .doc(FirebaseAuth.instance.currentUser?.uid)
+                      .get(),
 
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircleAvatar(
-                radius: 30,
-                backgroundColor: Colors.grey[300],
-                child: CircularProgressIndicator(),
-              );
-            }
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.grey[300],
+                        child: CircularProgressIndicator(),
+                      );
+                    }
 
-            if (!snapshot.hasData || !snapshot.data!.exists) {
-              return InkWell(
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => profile(uid: FirebaseAuth.instance.currentUser!.uid,),));
-                },
-                child: CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.grey[300],
-                  child: Icon(Icons.person, size: 30, color: Colors.white),
-                ),
-              );
-            }
+                    if (!snapshot.hasData || !snapshot.data!.exists) {
+                      return InkWell(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => profile(uid: FirebaseAuth.instance.currentUser!.uid,),));
+                        },
+                        child: CircleAvatar(
+                          radius: 30,
+                          backgroundColor: Colors.grey[300],
+                          child: Icon(Icons.person, size: 30, color: Colors.white),
+                        ),
+                      );
+                    }
 
-            String? imageUrl = snapshot.data!.get("profileImageUrl");
+                    String? imageUrl = snapshot.data!.get("profileImageUrl");
 
-            return InkWell(
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => profile(uid: FirebaseAuth.instance.currentUser!.uid,),));
-              },
-              child: CircleAvatar(
-                radius: 30,
-                backgroundImage: (imageUrl != null && imageUrl.isNotEmpty)
-                    ? NetworkImage(imageUrl)
-                    : null,
-                backgroundColor: Colors.grey[300],
-                child: (imageUrl == null || imageUrl.isEmpty)
-                    ? Icon(Icons.person, size: 30, color: Colors.white)
-                    : null,
-              ),
-            );
-          },
-        ),
-      ),
-          SizedBox(width: 10,),
-          IconButton(onPressed: (){
-            Authentication().signout(context);
-          }, icon: Icon(Icons.logout)),
-          SizedBox(height: 20,),
-
-          Container(
-            width: 20,
-          )
-        ],
-      ),
-
-      floatingActionButton:ElevatedButton(onPressed: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => AddProductForm(),));
-      }, child: Text("Add Product")) ,
-
-      body:Column(
-        children: [
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              
-              //stream: _firestore.collection('products').where("status",isEqualTo: "active").orderBy("auctionEndTime",descending: false).snapshots(),
-              stream: _firestore.collection('products').orderBy("auctionEndTime",descending: false).snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text('No products available.'));
-                }
-                final products = snapshot.data!.docs.map((doc) => Product.fromFirestore(doc)).toList();
-
-
-
-
-
-                monitorAuctionStatus();
-
-
-                return MasonryGridView.builder(
-                  gridDelegate:
-                  SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                  ),
-                  itemCount: products.length,
-                  itemBuilder: (context, index) {
-                    final product = products[index];
-                    return ProductCard(product: product);
+                    return InkWell(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => profile(uid: FirebaseAuth.instance.currentUser!.uid,),));
+                      },
+                      child: CircleAvatar(
+                        radius: 30,
+                        backgroundImage: (imageUrl != null && imageUrl.isNotEmpty)
+                            ? NetworkImage(imageUrl)
+                            : null,
+                        backgroundColor: Colors.grey[300],
+                        child: (imageUrl == null || imageUrl.isEmpty)
+                            ? Icon(Icons.person, size: 30, color: Colors.white)
+                            : null,
+                      ),
+                    );
                   },
-                );
-              },
-            ),
-          ),
+                ),
+              ),
+              SizedBox(width: 10,),
+              IconButton(onPressed: (){
+                Authentication().signout(context);
+              }, icon: Icon(Icons.logout)),
+              SizedBox(height: 20,),
 
-        ],
-      )
+              Container(
+                width: 20,
+              )
+            ],
+            bottom: TabBar(
+                tabs: [
+              Tab(
+                child: Text("All"),
+              ),
+              Tab(
+                child: Text("Active"),
+              ),
+              Tab(
+                child: Text("Ended"),
+              ),
+                  Tab(
+                    child: Text("Upcoming"),
+                  ),
+
+
+            ]),
+
+
+          ),
+          drawer: Drawer(
+
+            backgroundColor: Colors.white,
+            width: 200,
+          ),
+          floatingActionButton:ElevatedButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => AddProductForm(),));
+          }, child: Text("Add Product")) ,
+
+          body:TabBarView(
+            children: [
+              Container(
+                child: StreamBuilder<QuerySnapshot>(
+
+                  //stream: _firestore.collection('products').where("status",isEqualTo: "active").orderBy("auctionEndTime",descending: false).snapshots(),
+                  stream: _firestore.collection('products').orderBy("auctionEndTime",descending: false).snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return Center(child: Text('No products available.'));
+                    }
+                    final products = snapshot.data!.docs.map((doc) => Product.fromFirestore(doc)).toList();
+
+                    monitorAuctionStatus();
+
+                    return GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        childAspectRatio: 0.75,
+                        crossAxisCount: 2,
+
+                      ),
+
+                      itemCount: products.length,
+                      itemBuilder: (context, index) {
+                        final product = products[index];
+                        return ProductCard(product: product);
+                      },
+                    );
+                  },
+                ),
+              ),
+              Container(
+                child: StreamBuilder<QuerySnapshot>(
+
+                  stream: _firestore.collection('products').where("status",isEqualTo: "active").orderBy("auctionEndTime",descending: false).snapshots(),
+                  //stream: _firestore.collection('products').orderBy("auctionEndTime",descending: false).snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return Center(child: Text('No products available.'));
+                    }
+                    final products = snapshot.data!.docs.map((doc) => Product.fromFirestore(doc)).toList();
+
+                    monitorAuctionStatus();
+
+                    return GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        childAspectRatio: 0.75,
+                        crossAxisCount: 2,
+
+                      ),
+
+                      itemCount: products.length,
+                      itemBuilder: (context, index) {
+                        final product = products[index];
+                        return ProductCard(product: product);
+                      },
+                    );
+                  },
+                ),
+              ),
+              Container(
+                child: StreamBuilder<QuerySnapshot>(
+
+                  stream: _firestore.collection('products').where("status",isEqualTo: "ended").orderBy("auctionEndTime",descending: false).snapshots(),
+                 // stream: _firestore.collection('products').orderBy("auctionEndTime",descending: false).snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return Center(child: Text('No products available.'));
+                    }
+                    final products = snapshot.data!.docs.map((doc) => Product.fromFirestore(doc)).toList();
+
+                    monitorAuctionStatus();
+
+                    return GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        childAspectRatio: 0.75,
+                        crossAxisCount: 2,
+
+                      ),
+
+                      itemCount: products.length,
+                      itemBuilder: (context, index) {
+                        final product = products[index];
+                        return ProductCard(product: product);
+                      },
+                    );
+                  },
+                ),
+              ),
+              Container(
+                child: StreamBuilder<QuerySnapshot>(
+
+                  stream: _firestore.collection('products').where("status",isEqualTo: "upcoming").orderBy("auctionEndTime",descending: false).snapshots(),
+                  //stream: _firestore.collection('products').orderBy("auctionEndTime",descending: false).snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return Center(child: Text('No products available.'));
+                    }
+                    final products = snapshot.data!.docs.map((doc) => Product.fromFirestore(doc)).toList();
+
+                    monitorAuctionStatus();
+
+                    return GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        childAspectRatio: 0.75,
+                        crossAxisCount: 2,
+
+                      ),
+
+                      itemCount: products.length,
+                      itemBuilder: (context, index) {
+                        final product = products[index];
+                        return ProductCard(product: product);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          )
+      ),
     );
   }
 }
@@ -185,39 +311,124 @@ class _ProductCardState extends State<ProductCard> {
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (context) => Singleproductview(product: widget.product),));
       },
-      child: Card(
-        color: Colors.white70,
+      child: Container(
+      //  padding: EdgeInsets.all(8),
+       // color: Colors.white70,
         margin: EdgeInsets.all(8),
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-          //  crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (widget.product.imageUrl != null)
-                Container(
-                   height: 250,
-                  // width: 400,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(image:  NetworkImage(widget.product.imageUrl!,),fit: BoxFit.cover)
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+         image: DecorationImage(image:  NetworkImage(widget.product.imageUrl!,),fit: BoxFit.fitHeight),
+          boxShadow: [
+            BoxShadow(
+              color: Color.fromRGBO(149, 157, 165, 0.2), // RGBA color
+              offset: Offset(0, 8), // X: 0px, Y: 8px
+              blurRadius: 24, // Blur radius: 24px
+              spreadRadius: 0, // Spread radius: 0px (default)
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+
+            Stack(
+              alignment: Alignment.topLeft,
+              children: [
+
+                if (widget.product.imageUrl != null)
+                  Container(
+                    height: 170,
+                    // width: 400,
+                    decoration: BoxDecoration(
+                    // border: Border.symmetric(horizontal: BorderSide(color: Colors.grey,width: 1,strokeAlign: 0.3)),
+                      borderRadius: BorderRadius.circular(15),
+                     // image: DecorationImage(image:  NetworkImage(widget.product.imageUrl!,),fit: BoxFit.fitWidth),
+                    ),
+
                   ),
-                ),
-              //  Image.network(widget.product.imageUrl!, height: 150, width: double.infinity, fit: BoxFit.cover),
-              SizedBox(height: 8),
-              Text(widget.product.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              SizedBox(height: 8),
-              Text(widget.product.description,style: TextStyle(fontWeight: FontWeight.w600),maxLines: 2,overflow: TextOverflow.ellipsis,),
-              SizedBox(height: 8),
-              Text("Owner: ${widget.product.sellerName}"),
-              SizedBox(height: 8),
-              Text('Starting Price: \$${widget.product.startingPrice.toStringAsFixed(2)}'),
-              SizedBox(height: 8),
-              Text('Current Price: \$${widget.product.currentPrice.toStringAsFixed(2)}'),
-              SizedBox(height: 8),
-              Text('Status: ${widget.product.status}'),
-              SizedBox(height: 8),
-              Text('Time Remaining: ${widget.product.formatRemainingTime(_remainingTime)}'),
-            ],
-          ),
+
+                if(widget.product.status=='upcoming')
+                  Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color.fromRGBO(17, 12, 46, 0.15), // Converted RGBA color
+                          offset: Offset(0, 48), // X and Y offset
+                          blurRadius: 100, // Blur radius
+                          spreadRadius: 0, // Spread radius
+                        ), //BoxShadow//BoxShadow
+                      ],
+                      color: Colors.black.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    margin:  EdgeInsets.all(10),
+                    padding: EdgeInsets.all(5),
+                    child:  Text('Upcoming',style: TextStyle(fontSize: 10,color: Colors.white,fontWeight: FontWeight.bold)) ,
+                  )
+                else if(widget.product.auctionStartTime.isBefore(DateTime.now()))
+                  Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color.fromRGBO(17, 12, 46, 0.15), // Converted RGBA color
+                          offset: Offset(0, 48), // X and Y offset
+                          blurRadius: 100, // Blur radius
+                          spreadRadius: 0, // Spread radius
+                        ), //BoxShadow//BoxShadow
+                      ],
+                      color: Colors.black.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    margin:  EdgeInsets.all(10),
+                    padding: EdgeInsets.all(5),
+                    child:widget.product.status=="active" ? Text(' ${widget.product.formatRemainingTime(_remainingTime)}',style: TextStyle(fontSize: 10,color: Colors.white,fontWeight: FontWeight.bold)): Text('Ended',style: TextStyle(fontSize: 10,color: Colors.white,fontWeight: FontWeight.bold)) ,
+                  )
+              ],
+            ),
+            //  Image.network(widget.product.imageUrl!, height: 150, width: double.infinity, fit: BoxFit.cover),
+
+           Container(
+             height: 60,
+              margin: EdgeInsets.all(5),
+             padding: EdgeInsets.all(5),
+             decoration: BoxDecoration(
+               color: Colors.white,
+               borderRadius: BorderRadius.circular(10),
+               boxShadow: [
+                 BoxShadow(
+                   color: Color.fromRGBO(17, 12, 46, 0.15), // Converted RGBA color
+                   offset: Offset(0, 48), // X and Y offset
+                   blurRadius: 100, // Blur radius
+                   spreadRadius: 0, // Spread radius
+                 ), //BoxShadow//BoxShadow
+               ],
+             ),
+             width: double.infinity,
+            // color: Colors.grey,
+             child: Column(
+               mainAxisAlignment: MainAxisAlignment.start,
+               crossAxisAlignment: CrossAxisAlignment.start,
+               children: [
+                 Text(widget.product.name, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                 //SizedBox(height: 8),
+                 Text(widget.product.description,style: TextStyle(fontSize: 8,fontWeight: FontWeight.w600),maxLines: 1,overflow: TextOverflow.ellipsis,),
+                 // SizedBox(height: 8),
+                 //  Text("Owner: ${widget.product.sellerName}"),
+               //  SizedBox(height: 8),
+                 Text('Starting Price: \$${widget.product.startingPrice.toStringAsFixed(2)}',style: TextStyle(fontSize: 8,)),
+               //  SizedBox(height: 8),
+                 Text('Current Price: \$${widget.product.currentPrice.toStringAsFixed(2)}',style: TextStyle(fontSize: 8,)),
+                 // SizedBox(height: 8),
+                 // Text('Status: ${widget.product.status}'),
+                // SizedBox(height: 8),
+               //  Text('Time Remaining: ${widget.product.formatRemainingTime(_remainingTime)}',style: TextStyle(fontSize: 8,)),
+               ],
+             ),
+           ),
+
+          ],
         ),
       ),
     );

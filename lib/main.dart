@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:liveauctionsystem/wrapper.dart';
 //import 'package:supabase_flutter/supabase_flutter.dart';
 import 'firebase/firebase_options.dart';
-import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -37,25 +36,34 @@ class MyApp extends StatelessWidget {
 }
 void monitorAuctionStatus() async{
 
-  QuerySnapshot auctions = await FirebaseFirestore.instance
-      .collection('products')
-      .where('status', isEqualTo: 'active')
-      .get();
+
   Timer.periodic(Duration(seconds: 1), (timer) async{
 
-
+    QuerySnapshot auctions = await FirebaseFirestore.instance
+        .collection('products')
+        .where('status', isNotEqualTo: 'ended')
+        .get();
     DateTime now = DateTime.now();
+
 
     for (var auction in auctions.docs) {
       DateTime endTime = DateTime.parse(auction['auctionEndTime']);
+
+      DateTime startTime = DateTime.parse(auction['auctionStartTime']);
+
+
+      if(now.isAfter(startTime) && auction['status'] != 'active'){
+        print('hi');
+        print('${auction['name']} ${auction['status']}');
+        await auction.reference.update({'status': 'active'});
+      }
 
       // Check if the auction has ended
       if (now.isAfter(endTime) && auction['status'] != 'ended') {
         await auction.reference.update({'status': 'ended'});
 
       }
-      else
-        continue;
+
 
     }
   });

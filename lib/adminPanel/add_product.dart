@@ -3,11 +3,11 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-
 //import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../home/homepage.dart';
@@ -27,30 +27,42 @@ class _AddProductFormState extends State<AddProductForm> {
 
   getImage() async{
     var pic=await ImagePicker().pickImage(source: ImageSource.gallery);
-    setState(() {
-      image=File(pic!.path);
-    });
+
+    if(kIsWeb){
+
+      setState(() {
+        image=File(pic!.path);
+      });
+    }
+    else{
+      setState(() {
+        image=File(pic!.path);
+      });
+    }
+  //  download();
+
   }
   download() async{
     try {
-
+      print("1");
       //path=DateTime.now().toString();
       path = 'itemPhoto/${DateTime
           .now()
           .millisecondsSinceEpoch}.jpeg';
-
+      print("2");
       await FirebaseStorage.instance.ref(path).putFile(image!);
+      print("3");
       url = await FirebaseStorage.instance.ref(path).getDownloadURL();
-
+      print("4");
       print(url);
       setState(() {
         _imageUrl = url;
       });
     }catch(e){
-      print("3");
       print(e);
     }
   }
+
 
   final _formKey = GlobalKey<FormState>();
   final _firestore = FirebaseFirestore.instance;
@@ -66,7 +78,7 @@ class _AddProductFormState extends State<AddProductForm> {
   DateTime _auctionEndTime = DateTime.now().add(Duration(days: 7));
   String _imageUrl = '';
   String _category = '';
-
+  String _stats='';
 
 
    _selectDate(BuildContext context, bool isStartTime) async {
@@ -128,6 +140,12 @@ class _AddProductFormState extends State<AddProductForm> {
       await download();
       String sellerName =  await FirebaseFirestore.instance.collection("Users").doc(FirebaseAuth.instance.currentUser!.uid).get().then((value) => value.get("name"));
 
+
+      if(_auctionStartTime.isAfter(DateTime.now()))
+        _stats="upcoming";
+      else if(_auctionStartTime.isBefore(DateTime.now()) || _auctionEndTime.isAtSameMomentAs(DateTime.now()))
+        _stats="active";
+
       // Create a new product map
       final productData = {
         'name': _name,
@@ -142,7 +160,7 @@ class _AddProductFormState extends State<AddProductForm> {
         'auctionEndTime': _auctionEndTime.toIso8601String(),
         'imageUrl': _imageUrl,
         'category': _category,
-        'status': 'active',
+        'status': _stats,
       };
       print("1");
       // Add product to Firestore
@@ -215,13 +233,17 @@ class _AddProductFormState extends State<AddProductForm> {
                 },
                 onSaved: (value) => _startingPrice = double.parse(value!),
               ),
-            image!=null ? Container(child: Image.file(image!),) : Container(),
+
+
+
+           image!=null ? Container(child: Image.file(image!),) : Container(),
               // TextFormField(
               //   decoration: InputDecoration(labelText: 'Image URL'),
               //   onSaved: (value) => _imageUrl = value!,
               // ),
               ElevatedButton(onPressed: (){
                 getImage();
+
               }, child: Text("select photo")),
               // ElevatedButton(onPressed: (){
               //   download();
