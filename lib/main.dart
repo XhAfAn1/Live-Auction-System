@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:liveauctionsystem/app%20datas/theme%20data.dart';
 import 'package:liveauctionsystem/wrapper.dart';
 //import 'package:supabase_flutter/supabase_flutter.dart';
 import 'firebase/firebase_options.dart';
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+    //  theme: ThemeData(colorScheme: LightDarkMode.dark),
       home: wrapper(), // Pass initial user to wrapper
     );
   }

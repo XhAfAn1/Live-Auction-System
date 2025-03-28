@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
+  final boxheight=290.0;
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -99,6 +99,14 @@ class _HomePageState extends State<HomePage> {
               )
             ],
             bottom: TabBar(
+              isScrollable: true,
+                tabAlignment: TabAlignment.start,
+                dividerColor: Colors.white,
+                splashFactory: NoSplash.splashFactory,
+                indicatorColor: Colors.white,
+                labelStyle: TextStyle(color: Colors.blue,fontSize: 12,fontWeight: FontWeight.bold),
+
+               
                 tabs: [
               Tab(
                 child: Text("All"),
@@ -121,7 +129,7 @@ class _HomePageState extends State<HomePage> {
           drawer: Drawer(
 
             backgroundColor: Colors.white,
-            width: 200,
+            width: 280,
           ),
           floatingActionButton:ElevatedButton(onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => AddProductForm(),));
@@ -148,7 +156,8 @@ class _HomePageState extends State<HomePage> {
 
                     return GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        childAspectRatio: 0.75,
+                        //childAspectRatio: 0.75,
+                        mainAxisExtent: boxheight,
                         crossAxisCount: 2,
 
                       ),
@@ -181,7 +190,8 @@ class _HomePageState extends State<HomePage> {
 
                     return GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        childAspectRatio: 0.75,
+                       // childAspectRatio: 0.75,
+                        mainAxisExtent: boxheight,
                         crossAxisCount: 2,
 
                       ),
@@ -214,7 +224,8 @@ class _HomePageState extends State<HomePage> {
 
                     return GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        childAspectRatio: 0.75,
+                      //  childAspectRatio: 0.75,
+                        mainAxisExtent: boxheight,
                         crossAxisCount: 2,
 
                       ),
@@ -247,7 +258,8 @@ class _HomePageState extends State<HomePage> {
 
                     return GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        childAspectRatio: 0.75,
+                        //childAspectRatio: 0.75,
+                        mainAxisExtent: boxheight,
                         crossAxisCount: 2,
 
                       ),
@@ -267,6 +279,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+
 
 class ProductCard extends StatefulWidget {
   final Product product;
@@ -317,7 +331,7 @@ class _ProductCardState extends State<ProductCard> {
         margin: EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(7),
          image: DecorationImage(image:  NetworkImage(widget.product.imageUrl!,),fit: BoxFit.fitHeight),
           boxShadow: [
             BoxShadow(
@@ -339,7 +353,7 @@ class _ProductCardState extends State<ProductCard> {
 
                 if (widget.product.imageUrl != null)
                   Container(
-                    height: 170,
+                  //  height: 160,
                     // width: 400,
                     decoration: BoxDecoration(
                     // border: Border.symmetric(horizontal: BorderSide(color: Colors.grey,width: 1,strokeAlign: 0.3)),
@@ -360,12 +374,12 @@ class _ProductCardState extends State<ProductCard> {
                           spreadRadius: 0, // Spread radius
                         ), //BoxShadow//BoxShadow
                       ],
-                      color: Colors.black.withOpacity(0.5),
+                      color: Colors.grey.withOpacity(0.5),
                       borderRadius: BorderRadius.circular(15),
                     ),
                     margin:  EdgeInsets.all(10),
                     padding: EdgeInsets.all(5),
-                    child:  Text('Upcoming',style: TextStyle(fontSize: 10,color: Colors.white,fontWeight: FontWeight.bold)) ,
+                    child:  Text('Upcoming',style: TextStyle(fontSize: 8,color: Colors.white,fontWeight: FontWeight.bold)) ,
                   )
                 else if(widget.product.auctionStartTime.isBefore(DateTime.now()))
                   Container(
@@ -378,24 +392,24 @@ class _ProductCardState extends State<ProductCard> {
                           spreadRadius: 0, // Spread radius
                         ), //BoxShadow//BoxShadow
                       ],
-                      color: Colors.black.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(15),
+                      color: Colors.grey.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     margin:  EdgeInsets.all(10),
                     padding: EdgeInsets.all(5),
-                    child:widget.product.status=="active" ? Text(' ${widget.product.formatRemainingTime(_remainingTime)}',style: TextStyle(fontSize: 10,color: Colors.white,fontWeight: FontWeight.bold)): Text('Ended',style: TextStyle(fontSize: 10,color: Colors.white,fontWeight: FontWeight.bold)) ,
+                    child:widget.product.status=="active" ? Text(' ${widget.product.formatRemainingTime(_remainingTime)}',style: TextStyle(fontSize: 8,color: Colors.white,fontWeight: FontWeight.bold)): Text('Ended',style: TextStyle(fontSize: 8,color: Colors.white,fontWeight: FontWeight.bold)) ,
                   )
               ],
             ),
             //  Image.network(widget.product.imageUrl!, height: 150, width: double.infinity, fit: BoxFit.cover),
 
            Container(
-             height: 60,
+             height: 68,
               margin: EdgeInsets.all(5),
              padding: EdgeInsets.all(5),
              decoration: BoxDecoration(
                color: Colors.white,
-               borderRadius: BorderRadius.circular(10),
+               borderRadius: BorderRadius.circular(5),
                boxShadow: [
                  BoxShadow(
                    color: Color.fromRGBO(17, 12, 46, 0.15), // Converted RGBA color
@@ -407,25 +421,58 @@ class _ProductCardState extends State<ProductCard> {
              ),
              width: double.infinity,
             // color: Colors.grey,
-             child: Column(
-               mainAxisAlignment: MainAxisAlignment.start,
-               crossAxisAlignment: CrossAxisAlignment.start,
+             child: Row(
+               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+               crossAxisAlignment: CrossAxisAlignment.stretch,
                children: [
-                 Text(widget.product.name, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                 //SizedBox(height: 8),
-                 Text(widget.product.description,style: TextStyle(fontSize: 8,fontWeight: FontWeight.w600),maxLines: 1,overflow: TextOverflow.ellipsis,),
-                 // SizedBox(height: 8),
-                 //  Text("Owner: ${widget.product.sellerName}"),
-               //  SizedBox(height: 8),
-                 Text('Starting Price: \$${widget.product.startingPrice.toStringAsFixed(2)}',style: TextStyle(fontSize: 8,)),
-               //  SizedBox(height: 8),
-                 Text('Current Price: \$${widget.product.currentPrice.toStringAsFixed(2)}',style: TextStyle(fontSize: 8,)),
-                 // SizedBox(height: 8),
-                 // Text('Status: ${widget.product.status}'),
-                // SizedBox(height: 8),
-               //  Text('Time Remaining: ${widget.product.formatRemainingTime(_remainingTime)}',style: TextStyle(fontSize: 8,)),
+                 Container(
+                   width: 110,
+                   child: Column(
+                     mainAxisAlignment: MainAxisAlignment.start,
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [
+                       Text(widget.product.name, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                       SizedBox(height: 6),
+                       Text(widget.product.description,style: TextStyle(fontSize: 7,color:Colors.grey),maxLines: 3,overflow: TextOverflow.ellipsis,),
+                       // SizedBox(height: 8),
+                       //  Text("Owner: ${widget.product.sellerName}"),
+                       //  SizedBox(height: 8),
+              //         Text('Starting Price: \$${widget.product.startingPrice.toStringAsFixed(2)}',style: TextStyle(fontSize: 8,)),
+                       //  SizedBox(height: 8),
+              //         Text('Current Price: \$${widget.product.currentPrice.toStringAsFixed(2)}',style: TextStyle(fontSize: 8,)),
+                       // SizedBox(height: 8),
+                       // Text('Status: ${widget.product.status}'),
+                       // SizedBox(height: 8),
+                       //  Text('Time Remaining: ${widget.product.formatRemainingTime(_remainingTime)}',style: TextStyle(fontSize: 8,)),
+                     ],
+                   ),
+                 ),
+
+                 Container(
+                  // width: 50,
+                   child: Column(
+                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                     children: [
+                       Column(
+                         children: [
+
+                           Text('Starting Price',style: TextStyle(fontSize: 8,color:Colors.grey)),
+                           Text('\$${widget.product.startingPrice.toStringAsFixed(2)}',style: TextStyle(fontSize: 9,fontWeight: FontWeight.bold)),
+
+                         ],
+                       ),
+                       //  SizedBox(height: 8),
+                       Column(
+                         children: [
+                           Text('Current Price',style: TextStyle(fontSize: 8,color:Colors.grey)),
+                           Text('\$${widget.product.currentPrice.toStringAsFixed(2)}',style: TextStyle(fontSize: 9,fontWeight: FontWeight.bold)),
+
+                         ],
+                       ) ],
+                   ),
+                 ),
                ],
-             ),
+             )
            ),
 
           ],
