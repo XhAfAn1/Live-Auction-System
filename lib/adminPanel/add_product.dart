@@ -70,7 +70,7 @@ class _AddProductFormState extends State<AddProductForm> {
   // Form fields
   String _name = '';
   String _description = '';
-  double _startingPrice = 0.0;
+  int _startingPrice = 0;
   String _sellerId =   FirebaseAuth.instance.currentUser!.uid;
   String highBidderId =   "";
   String highBidderName =   "";
@@ -226,12 +226,12 @@ class _AddProductFormState extends State<AddProductForm> {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a starting price';
                   }
-                  if (double.tryParse(value) == null) {
+                  if (int.tryParse(value) == null) {
                     return 'Please enter a valid number';
                   }
                   return null;
                 },
-                onSaved: (value) => _startingPrice = double.parse(value!),
+                onSaved: (value) => _startingPrice = int.parse(value!),
               ),
 
 

@@ -69,7 +69,7 @@ class _loginState extends State<login> {
                 setState(() {
                   btn_text="Logging in...";
                 });
-               isloading=await Authentication().signin(email: email.text, password: password.text,context: context);
+               isloading=await Authentication().signin(email: email.text.trim(), password: password.text,context: context);
 
               if(!isloading){
                 Timer(Duration(milliseconds: 50), () {

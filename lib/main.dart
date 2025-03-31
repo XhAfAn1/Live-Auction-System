@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:liveauctionsystem/app%20datas/theme%20data.dart';
+import 'package:liveauctionsystem/home/homepage.dart';
 import 'package:liveauctionsystem/wrapper.dart';
 //import 'package:supabase_flutter/supabase_flutter.dart';
 import 'firebase/firebase_options.dart';
@@ -30,9 +31,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(fontFamily: 'Poppins'),
       debugShowCheckedModeBanner: false,
     //  theme: ThemeData(colorScheme: LightDarkMode.dark),
-      home: wrapper(), // Pass initial user to wrapper
+      home: HomePage(), // Pass initial user to wrapper
     );
   }
 }

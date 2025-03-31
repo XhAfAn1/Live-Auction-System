@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:liveauctionsystem/adminPanel/add_product.dart';
 import 'package:liveauctionsystem/home/profile.dart';
-
+import 'package:liveauctionsystem/login%20signup/login.dart';
 import '../classes/Product.dart';
 import '../firebase/Authentication.dart';
 import '../main.dart';
@@ -28,17 +28,104 @@ class _HomePageState extends State<HomePage> {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final boxheight=290.0;
+
+  int boxcount() {
+    if (MediaQuery
+        .sizeOf(context)
+        .width > 1500.0) {
+      return 6;
+    }
+    else if (MediaQuery
+        .sizeOf(context)
+        .width > 1300.0) {
+      return 5;
+    }
+    else if (MediaQuery
+        .sizeOf(context)
+        .width > 1000.0) {
+      return 4;
+    }
+
+    else if (MediaQuery
+        .sizeOf(context)
+        .width > 650.0) {
+      return 3;
+    }
+    else if (MediaQuery
+        .sizeOf(context)
+        .width > 300.0) {
+      return 2;
+    }
+
+    else {
+      return 1;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    showLogDiag(){
+      showDialog(context: context,
+        builder: (context) =>
+            AlertDialog(
+              title: Text(
+                'You are not logged in',
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => login(),));
+                  },
+                  child: const Text("Login"),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("OK"),
+                ),
+              ],
+            ),
+      );
+
+
+
+    }
     return DefaultTabController(
       length: 4,
       child: Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
             backgroundColor: Colors.white,
-            title: Text('Auction Products'),
-            actions: [
+            automaticallyImplyLeading: false,
+            title: Builder(
+        builder: (context) => GestureDetector(
+          onHorizontalDragUpdate: (e){
+            if(e.delta.dx>0){
+              Scaffold.of(context).openDrawer();
+            }
+          },
+        onTap: () {
+        Scaffold.of(context).openDrawer(); // Open drawer when tapped
+        },
+        child: Container(
 
+             // width: 70,
+             // height: 30,
+              padding: EdgeInsets.symmetric(horizontal: 0,vertical: 0),
+              decoration: BoxDecoration(
+               // color: Color(0xffa8ed4f),
+                borderRadius: BorderRadius.circular(40)
+              ),
+              child: //Text("AucSy",textAlign: TextAlign.center,style: TextStyle(color:Color(0xff093125),fontWeight: FontWeight.w700,fontSize: 25,fontFamily: ''),),
+                Image.asset('assets/logo.png', width: 100, // Set explicit width
+                  height: 220,),
+
+            ),)),
+            titleSpacing: 10,
+            actions: [
+              //if(FirebaseAuth.instance.currentUser != null)
               Container(
                 child: FutureBuilder<DocumentSnapshot>(
                   future: FirebaseFirestore.instance
@@ -49,7 +136,7 @@ class _HomePageState extends State<HomePage> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return CircleAvatar(
-                        radius: 30,
+                        radius: 20,
                         backgroundColor: Colors.grey[300],
                         child: CircularProgressIndicator(),
                       );
@@ -58,12 +145,15 @@ class _HomePageState extends State<HomePage> {
                     if (!snapshot.hasData || !snapshot.data!.exists) {
                       return InkWell(
                         onTap: (){
+                          if(FirebaseAuth.instance.currentUser == null)
+                            showLogDiag();
+                          else
                           Navigator.push(context, MaterialPageRoute(builder: (context) => profile(uid: FirebaseAuth.instance.currentUser!.uid,),));
                         },
                         child: CircleAvatar(
-                          radius: 30,
+                          radius: 20,
                           backgroundColor: Colors.grey[300],
-                          child: Icon(Icons.person, size: 30, color: Colors.white),
+                          child: Icon(Icons.person, size: 20, color: Colors.white),
                         ),
                       );
                     }
@@ -72,27 +162,28 @@ class _HomePageState extends State<HomePage> {
 
                     return InkWell(
                       onTap: (){
+                        if(FirebaseAuth.instance.currentUser == null)
+                          showLogDiag();
+                        else
                         Navigator.push(context, MaterialPageRoute(builder: (context) => profile(uid: FirebaseAuth.instance.currentUser!.uid,),));
                       },
                       child: CircleAvatar(
-                        radius: 30,
+                        radius: 20,
                         backgroundImage: (imageUrl != null && imageUrl.isNotEmpty)
                             ? NetworkImage(imageUrl)
                             : null,
                         backgroundColor: Colors.grey[300],
                         child: (imageUrl == null || imageUrl.isEmpty)
-                            ? Icon(Icons.person, size: 30, color: Colors.white)
+                            ? Icon(Icons.person, size: 20, color: Colors.white)
                             : null,
                       ),
                     );
                   },
                 ),
               ),
-              SizedBox(width: 10,),
-              IconButton(onPressed: (){
-                Authentication().signout(context);
-              }, icon: Icon(Icons.logout)),
-              SizedBox(height: 20,),
+
+
+
 
               Container(
                 width: 20,
@@ -106,7 +197,7 @@ class _HomePageState extends State<HomePage> {
                 indicatorColor: Colors.white,
                 labelStyle: TextStyle(color: Colors.blue,fontSize: 12,fontWeight: FontWeight.bold),
 
-               
+
                 tabs: [
               Tab(
                 child: Text("All"),
@@ -124,14 +215,28 @@ class _HomePageState extends State<HomePage> {
 
             ]),
 
-
           ),
+
           drawer: Drawer(
 
             backgroundColor: Colors.white,
             width: 280,
+            child: ListView(
+              children: [
+                SizedBox(height: 100,),
+              if(FirebaseAuth.instance.currentUser != null)
+                IconButton(onPressed: (){
+                  Authentication().signout(context);
+                }, icon: Icon(Icons.logout)),
+                SizedBox(height: 20,),
+
+              ],
+            ),
           ),
           floatingActionButton:ElevatedButton(onPressed: () {
+            if(FirebaseAuth.instance.currentUser == null)
+              showLogDiag();
+            else
             Navigator.push(context, MaterialPageRoute(builder: (context) => AddProductForm(),));
           }, child: Text("Add Product")) ,
 
@@ -158,7 +263,7 @@ class _HomePageState extends State<HomePage> {
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         //childAspectRatio: 0.75,
                         mainAxisExtent: boxheight,
-                        crossAxisCount: 2,
+                        crossAxisCount: boxcount(),
 
                       ),
 
@@ -192,7 +297,7 @@ class _HomePageState extends State<HomePage> {
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                        // childAspectRatio: 0.75,
                         mainAxisExtent: boxheight,
-                        crossAxisCount: 2,
+                        crossAxisCount: boxcount(),
 
                       ),
 
@@ -226,7 +331,7 @@ class _HomePageState extends State<HomePage> {
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       //  childAspectRatio: 0.75,
                         mainAxisExtent: boxheight,
-                        crossAxisCount: 2,
+                        crossAxisCount: boxcount(),
 
                       ),
 
@@ -260,7 +365,7 @@ class _HomePageState extends State<HomePage> {
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         //childAspectRatio: 0.75,
                         mainAxisExtent: boxheight,
-                        crossAxisCount: 2,
+                        crossAxisCount: boxcount(),
 
                       ),
 
@@ -322,16 +427,19 @@ class _ProductCardState extends State<ProductCard> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+
+      splashFactory: NoSplash.splashFactory,
+      borderRadius:BorderRadius.circular(5) ,
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (context) => Singleproductview(product: widget.product),));
       },
       child: Container(
       //  padding: EdgeInsets.all(8),
        // color: Colors.white70,
-        margin: EdgeInsets.all(8),
+        margin: EdgeInsets.all(5),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(7),
+          borderRadius: BorderRadius.circular(5),
          image: DecorationImage(image:  NetworkImage(widget.product.imageUrl!,),fit: BoxFit.fitHeight),
           boxShadow: [
             BoxShadow(
@@ -404,9 +512,9 @@ class _ProductCardState extends State<ProductCard> {
             //  Image.network(widget.product.imageUrl!, height: 150, width: double.infinity, fit: BoxFit.cover),
 
            Container(
-             height: 68,
-              margin: EdgeInsets.all(5),
-             padding: EdgeInsets.all(5),
+             height: 60,
+              margin: EdgeInsets.only(left: 5,right: 5,bottom: 12),
+             padding: EdgeInsets.only(left: 8,right: 8),
              decoration: BoxDecoration(
                color: Colors.white,
                borderRadius: BorderRadius.circular(5),
@@ -426,14 +534,22 @@ class _ProductCardState extends State<ProductCard> {
                crossAxisAlignment: CrossAxisAlignment.stretch,
                children: [
                  Container(
-                   width: 110,
+                  // width: 120,
                    child: Column(
-                     mainAxisAlignment: MainAxisAlignment.start,
+                     mainAxisAlignment: MainAxisAlignment.end,
                      crossAxisAlignment: CrossAxisAlignment.start,
                      children: [
-                       Text(widget.product.name, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-                       SizedBox(height: 6),
-                       Text(widget.product.description,style: TextStyle(fontSize: 7,color:Colors.grey),maxLines: 3,overflow: TextOverflow.ellipsis,),
+                       Text(widget.product.name, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),maxLines: 1,overflow: TextOverflow.ellipsis,),
+                       SizedBox(height: 8),
+                       Container(
+                           decoration: BoxDecoration(
+                             color: Color(0xffecffbd),
+                             borderRadius: BorderRadius.circular(2.5),
+                           ),
+                           padding: EdgeInsets.symmetric(horizontal: 6,vertical: 1),
+                           child: Text('Price: \৳${widget.product.startingPrice}',style: TextStyle(fontSize: 8,color:Color(0xffabd14c),fontWeight: FontWeight.bold),)),
+                       SizedBox(height: 8),
+                      // Text(widget.product.description,style: TextStyle(fontSize: 7,color:Colors.grey),maxLines: 3,overflow: TextOverflow.ellipsis,),
                        // SizedBox(height: 8),
                        //  Text("Owner: ${widget.product.sellerName}"),
                        //  SizedBox(height: 8),
@@ -451,30 +567,28 @@ class _ProductCardState extends State<ProductCard> {
                  Container(
                   // width: 50,
                    child: Column(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                     mainAxisAlignment: MainAxisAlignment.end,
                      children: [
-                       Column(
-                         children: [
 
-                           Text('Starting Price',style: TextStyle(fontSize: 8,color:Colors.grey)),
-                           Text('\$${widget.product.startingPrice.toStringAsFixed(2)}',style: TextStyle(fontSize: 9,fontWeight: FontWeight.bold)),
+                       //  SizedBox(height: 8),
+                       Column(
+                         mainAxisAlignment: MainAxisAlignment.end,
+                         crossAxisAlignment: CrossAxisAlignment.end,
+                         children: [
+                           Text('BID',style: TextStyle(fontSize: 10,color:Colors.grey)),
+                           Text('\৳${widget.product.currentPrice}',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,color: Color(0xffabd14c))),
 
                          ],
                        ),
-                       //  SizedBox(height: 8),
-                       Column(
-                         children: [
-                           Text('Current Price',style: TextStyle(fontSize: 8,color:Colors.grey)),
-                           Text('\$${widget.product.currentPrice.toStringAsFixed(2)}',style: TextStyle(fontSize: 9,fontWeight: FontWeight.bold)),
+                       SizedBox(height: 6),
 
-                         ],
-                       ) ],
+                     ],
                    ),
                  ),
                ],
              )
            ),
-
+           // SizedBox(height: 5,)
           ],
         ),
       ),

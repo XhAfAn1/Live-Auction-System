@@ -6,8 +6,8 @@ class Product {
   final String productId;
   final String name;
   final String description;
-  final double startingPrice;
-  double currentPrice;
+  final int startingPrice;
+  int currentPrice;
   final String sellerId;
   final String highBidderId;
   final String highBidderName;
@@ -36,7 +36,7 @@ class Product {
   });
 
   // Method to place a bid
-  Future<void> placeBid(context,double bidPrice,String status) async {
+  Future<void> placeBid(context,int bidPrice,String status) async {
     if(bidPrice>currentPrice && status=='active'){
       try {
         String userId = FirebaseAuth.instance.currentUser!.uid;

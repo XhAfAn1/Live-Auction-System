@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../classes/Product.dart';
+import '../login signup/login.dart';
 
 class Singleproductview extends StatefulWidget {
   final Product product;
@@ -53,7 +54,7 @@ class _SingleproductviewState extends State<Singleproductview> {
             SizedBox(height: 8),
             timer(product: widget.product),
             SizedBox(height: 8),
-            Text('Starting Price: \$${widget.product.startingPrice.toStringAsFixed(2)}'),
+            Text('Starting Price: \৳${widget.product.startingPrice.toStringAsFixed(2)}'),
             SizedBox(height: 8),
             StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
@@ -74,7 +75,7 @@ class _SingleproductviewState extends State<Singleproductview> {
 
                 // Extract Firestore data
                 var productData = snapshot.data!.data() as Map<String, dynamic>;
-                double newPrice = (productData["currentPrice"] as num).toDouble();
+                int newPrice = (productData["currentPrice"] as num).toInt();
 
                 // Only update the UI if the price has changed
                 if (widget.product.currentPrice < newPrice) {
@@ -92,7 +93,7 @@ class _SingleproductviewState extends State<Singleproductview> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                   //  Text("Remaining Time: ${_remainingTime ~/ 3600}h ${(_remainingTime % 3600) ~/ 60}m ${_remainingTime % 60}s"),
-                    Text('Current Price: \$${newPrice.toStringAsFixed(2)}'),
+                    Text('Current Price: \৳${newPrice.toStringAsFixed(2)}'),
                     SizedBox(height: 8),
                     Text('Top Bidder: ${productData["highBidderName"]}'),
                     SizedBox(height: 20),
@@ -114,13 +115,19 @@ class _SingleproductviewState extends State<Singleproductview> {
                         if(widget.product.auctionStartTime.isBefore(DateTime.now()))
                         ElevatedButton(
                           onPressed: () async {
-                            double? bidAmount = double.tryParse(bidController.text);
+
+
+
+                            int? bidAmount = int.tryParse(bidController.text);
                             if (bidAmount == null) {
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(SnackBar(content: Text("Invalid bid amount")));
                               return;
                             }
-
+                            if(FirebaseAuth.instance.currentUser == null){
+                              showLogDiag();
+                              return;
+                            }
                             widget.product.placeBid(context, bidAmount, widget.product.status);
                           },
                           child: Text("Bid"),
@@ -170,7 +177,7 @@ class _SingleproductviewState extends State<Singleproductview> {
                       var bidData = bidDocs[index].data() as Map<String, dynamic>;
                       final name = bidData["name"] ?? "No name found";
                       var email = bidData["email"] ?? "No email found";
-                      final bidAmount = bidData["bid"] ?? 0.0;
+                      final bidAmount = bidData["bid"] ?? 0;
 
                       email=func(email,bidData,index);
 
@@ -180,7 +187,7 @@ class _SingleproductviewState extends State<Singleproductview> {
                         email=snapshot.data ?? "Loading..";
                        return ListTile(
                           title: Text('$name:  $email', style: const TextStyle(color: Colors.black)),
-                          subtitle: Text('\$${bidAmount.toStringAsFixed(2)}',
+                          subtitle: Text('\৳${bidAmount}',
                               style: const TextStyle(color: Colors.grey)),
                         );
                       },);
@@ -262,9 +269,37 @@ class _SingleproductviewState extends State<Singleproductview> {
       builder: (context) =>
           AlertDialog(
             title: Text(
-              'Sold to ${name} at \$${price}',
+              'Sold to ${name} at \৳${price}',
             ),
             actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+    );
+
+
+
+  }
+
+  void showLogDiag() {
+    showDialog(context: context,
+      builder: (context) =>
+          AlertDialog(
+            title: Text(
+              'You are not logged in',
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => login(),));
+                },
+                child: const Text("Login"),
+              ),
               ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
