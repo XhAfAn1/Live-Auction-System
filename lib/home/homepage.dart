@@ -23,7 +23,13 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    monitorAuctionStatus();
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    stopMonitoring();
   }
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -69,21 +75,69 @@ class _HomePageState extends State<HomePage> {
       showDialog(context: context,
         builder: (context) =>
             AlertDialog(
-              title: Text(
-                'You are not logged in',
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20), // Rounded corners
               ),
+              backgroundColor: Colors.white,
+              title: Column(
+                children: [
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.orangeAccent,
+                    size: 50, // Large warning icon
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'You are not logged in',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+              content: Text(
+                'Please log in to access this feature.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, color: Colors.black54),
+              ),
+              actionsAlignment: MainAxisAlignment.center,
               actions: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => login(),));
-                  },
-                  child: const Text("Login"),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text("OK"),
+                Wrap(
+                  spacing: 10,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => login()),
+                        );
+                      },
+                      child: const Text(
+                        "Login",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        side: BorderSide(color: Colors.grey.shade400),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Cancel"),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -257,7 +311,7 @@ class _HomePageState extends State<HomePage> {
                     }
                     final products = snapshot.data!.docs.map((doc) => Product.fromFirestore(doc)).toList();
 
-                    monitorAuctionStatus();
+                   // monitorAuctionStatus();
 
                     return GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -291,7 +345,7 @@ class _HomePageState extends State<HomePage> {
                     }
                     final products = snapshot.data!.docs.map((doc) => Product.fromFirestore(doc)).toList();
 
-                    monitorAuctionStatus();
+                 //   monitorAuctionStatus();
 
                     return GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -325,7 +379,7 @@ class _HomePageState extends State<HomePage> {
                     }
                     final products = snapshot.data!.docs.map((doc) => Product.fromFirestore(doc)).toList();
 
-                    monitorAuctionStatus();
+                  //  monitorAuctionStatus();
 
                     return GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -359,7 +413,7 @@ class _HomePageState extends State<HomePage> {
                     }
                     final products = snapshot.data!.docs.map((doc) => Product.fromFirestore(doc)).toList();
 
-                    monitorAuctionStatus();
+                  //  monitorAuctionStatus();
 
                     return GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

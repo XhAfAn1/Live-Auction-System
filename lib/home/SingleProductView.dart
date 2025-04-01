@@ -19,12 +19,18 @@ class Singleproductview extends StatefulWidget {
 
 class _SingleproductviewState extends State<Singleproductview> {
   TextEditingController bidController=TextEditingController();
-
+  Timer? _timer;
   @override
   void initState(){
     // TODO: implement initState
     super.initState();
     bidController=TextEditingController(text: (widget.product.currentPrice+1).toString());
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _timer?.cancel();
   }
 
 
@@ -75,6 +81,7 @@ class _SingleproductviewState extends State<Singleproductview> {
 
                 // Extract Firestore data
                 var productData = snapshot.data!.data() as Map<String, dynamic>;
+                widget.product.highBidderName=productData["highBidderName"];
                 int newPrice = (productData["currentPrice"] as num).toInt();
 
                 // Only update the UI if the price has changed
@@ -96,6 +103,7 @@ class _SingleproductviewState extends State<Singleproductview> {
                     Text('Current Price: \৳${newPrice.toStringAsFixed(2)}'),
                     SizedBox(height: 8),
                     Text('Top Bidder: ${productData["highBidderName"]}'),
+                    Text('Status: ${widget.product.status}'),
                     SizedBox(height: 20),
 
                     Row(
@@ -223,9 +231,11 @@ class _SingleproductviewState extends State<Singleproductview> {
   }
 
   statuscheck(String id, BuildContext context) {
-    Timer.periodic(Duration(seconds: 1), (timer) async {
+    _timer=Timer.periodic(Duration(seconds: 1), (timer) async {
       try {
         DateTime now = DateTime.now();
+        print(now);
+
         DocumentSnapshot auction = await FirebaseFirestore.instance
             .collection('products')
             .doc(id)
@@ -235,8 +245,17 @@ class _SingleproductviewState extends State<Singleproductview> {
 
         DateTime startTime = DateTime.parse(auction['auctionStartTime']);
 
+        //  widget.product.status=auction['status'];
 
-        if(startTime.isBefore(now) && auction['status'] == 'upcoming'){
+
+        if(auction['status']=='ended' && widget.product.status=='active'){
+          setState(() {
+            widget.product.status='ended';
+          });
+          showDiag(context,widget.product.highBidderName,widget.product.currentPrice.toString());
+          return;
+        }
+       else if(startTime.isBefore(now) && widget.product.status == 'upcoming'){
           await auction.reference.update({'status': 'active'});
 
           setState(() {
@@ -244,19 +263,31 @@ class _SingleproductviewState extends State<Singleproductview> {
           });
         }
 
-
-        if (now.isAfter(endTime) && auction['status'] != 'ended') {
+        else if (now.isAfter(endTime) && widget.product.status == 'active') {
           await auction.reference.update({'status': 'ended'});
           print('Auction ${auction.id} has ended.');
+          print('.................................................');
 
           setState(() {
             widget.product.status='ended';
           });
 
           showDiag(context,widget.product.highBidderName,widget.product.currentPrice.toString());
-
+          return;
           timer.cancel();
         }
+
+
+      if(auction["status"]=='ended'){
+        if(widget.product.status == 'active'){
+          setState(() {
+            widget.product.status='ended';
+          });
+          showDiag(context,widget.product.highBidderName,widget.product.currentPrice.toString());
+          return;
+        }
+        _timer?.cancel();
+      }
       } catch (e) {
         print('Error in statusCheck: $e');
         timer.cancel();
@@ -267,16 +298,50 @@ class _SingleproductviewState extends State<Singleproductview> {
   showDiag(context,String name,String price){
     showDialog(context: context,
       builder: (context) =>
-          AlertDialog(
-            title: Text(
-              'Sold to ${name} at \৳${price}',
+          AlertDialog( shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20), // Smooth rounded corners
+          ),
+            backgroundColor: Colors.white,
+            title: Column(
+              children: [
+                Icon(
+                  Icons.check_circle_outline,
+                  color: Colors.green,
+                  size: 50, // Success icon
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Sold to $name',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
             ),
+            content: Text(
+              'Final price: ৳$price',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, color: Colors.black54),
+            ),
+            actionsAlignment: MainAxisAlignment.center,
             actions: [
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text("OK"),
+                child: const Text(
+                  "OK",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -286,25 +351,73 @@ class _SingleproductviewState extends State<Singleproductview> {
 
   }
 
-  void showLogDiag() {
+  showLogDiag(){
     showDialog(context: context,
       builder: (context) =>
           AlertDialog(
-            title: Text(
-              'You are not logged in',
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20), // Rounded corners
             ),
+            backgroundColor: Colors.white,
+            title: Column(
+              children: [
+                Icon(
+                  Icons.warning_amber_rounded,
+                  color: Colors.orangeAccent,
+                  size: 50, // Large warning icon
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'You are not logged in',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+            content: Text(
+              'Please log in to access this feature.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, color: Colors.black54),
+            ),
+            actionsAlignment: MainAxisAlignment.center,
             actions: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => login(),));
-                },
-                child: const Text("Login"),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text("OK"),
+              Wrap(
+                spacing: 10,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => login()),
+                      );
+                    },
+                    child: const Text(
+                      "Login",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      side: BorderSide(color: Colors.grey.shade400),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Cancel"),
+                  ),
+                ],
               ),
             ],
           ),

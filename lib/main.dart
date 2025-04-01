@@ -23,7 +23,7 @@ void main() async {
  // monitorAuctionStatus();
   runApp(MyApp());
 }
-
+Timer? _timer;
 class MyApp extends StatelessWidget {
 
   const MyApp({super.key});
@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
 void monitorAuctionStatus() async{
 
 
-  Timer.periodic(Duration(seconds: 1), (timer) async{
+ _timer= Timer.periodic(Duration(seconds: 1), (timer) async{
 
     QuerySnapshot auctions = await FirebaseFirestore.instance
         .collection('products')
@@ -71,5 +71,8 @@ void monitorAuctionStatus() async{
 
     }
   });
+}
+void stopMonitoring() {
+  _timer?.cancel();
 }
 

@@ -52,7 +52,8 @@ class Authentication {
   Future<void> signout(context) async {
     await FirebaseAuth.instance.signOut();
 
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>const login(),));
+    //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>const login(),));
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>const HomePage(),));
   }
 
 

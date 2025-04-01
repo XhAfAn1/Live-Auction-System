@@ -10,7 +10,7 @@ class Product {
   int currentPrice;
   final String sellerId;
   final String highBidderId;
-  final String highBidderName;
+  String highBidderName;
   final String sellerName;
   final DateTime auctionStartTime;
   final DateTime auctionEndTime;

@@ -20,27 +20,25 @@ class AddProductForm extends StatefulWidget {
 }
 
 class _AddProductFormState extends State<AddProductForm> {
-  File? image;
+
   String path="";
   String url="";
   String btn_test="Add Product";
+  File? image;
+  getImage(ImageSource source) async{
+    try {
+      var pic = await ImagePicker().pickImage(source: source);
 
-  getImage() async{
-    var pic=await ImagePicker().pickImage(source: ImageSource.gallery);
-
-    if(kIsWeb){
-
-      setState(() {
-        image=File(pic!.path);
-      });
+      if (pic!.path != null) {
+        setState(() {
+          image = File(pic!.path);
+        });
+      }
+      //  download();
     }
-    else{
-      setState(() {
-        image=File(pic!.path);
-      });
+    catch(e){
+      print(e);
     }
-  //  download();
-
   }
   download() async{
     try {
@@ -241,10 +239,18 @@ class _AddProductFormState extends State<AddProductForm> {
               //   decoration: InputDecoration(labelText: 'Image URL'),
               //   onSaved: (value) => _imageUrl = value!,
               // ),
-              ElevatedButton(onPressed: (){
-                getImage();
+             Row(
+               mainAxisAlignment: MainAxisAlignment.center,
+               children: [
+                 ElevatedButton(onPressed: (){
+                   getImage(ImageSource.gallery);
 
-              }, child: Text("select photo")),
+                 }, child: Text("select photo")),
+                 IconButton(onPressed: (){
+                   getImage(ImageSource.camera);
+                 },icon: Icon(Icons.add_a_photo_outlined),)
+               ],
+             ),
               // ElevatedButton(onPressed: (){
               //   download();
               // }, child: Text("upload")),
