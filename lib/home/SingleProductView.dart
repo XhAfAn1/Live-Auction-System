@@ -19,7 +19,7 @@ class Singleproductview extends StatefulWidget {
 
 class _SingleproductviewState extends State<Singleproductview> {
   TextEditingController bidController=TextEditingController();
-  Timer? _timer;
+   Timer? _timer;
   @override
   void initState(){
     // TODO: implement initState
@@ -29,8 +29,9 @@ class _SingleproductviewState extends State<Singleproductview> {
   @override
   void dispose() {
     // TODO: implement dispose
-    super.dispose();
+
     _timer?.cancel();
+    super.dispose();
   }
 
 
@@ -137,6 +138,7 @@ class _SingleproductviewState extends State<Singleproductview> {
                               return;
                             }
                             widget.product.placeBid(context, bidAmount, widget.product.status);
+                            _timer?.cancel();
                           },
                           child: Text("Bid"),
                         ),
@@ -173,6 +175,8 @@ class _SingleproductviewState extends State<Singleproductview> {
                   var bidDocs = snapshot.data!.docs;
 
                          //status update test
+
+                  _timer?.cancel();
                   statuscheck(widget.product.productId,context);
 
 
@@ -225,7 +229,7 @@ class _SingleproductviewState extends State<Singleproductview> {
           .collection("Users")
           .doc(bidData["uid"])
           .get();
-      print('${email.data()!["name"]} $index');
+    //  print('${email.data()!["name"]} $index');
       return '${email.data()!["email"]}';
     }catch(e){}
   }
@@ -253,6 +257,7 @@ class _SingleproductviewState extends State<Singleproductview> {
             widget.product.status='ended';
           });
           showDiag(context,widget.product.highBidderName,widget.product.currentPrice.toString());
+          _timer?.cancel();
           return;
         }
        else if(startTime.isBefore(now) && widget.product.status == 'upcoming'){
@@ -273,8 +278,9 @@ class _SingleproductviewState extends State<Singleproductview> {
           });
 
           showDiag(context,widget.product.highBidderName,widget.product.currentPrice.toString());
+          _timer?.cancel();
           return;
-          timer.cancel();
+
         }
 
 
@@ -284,13 +290,14 @@ class _SingleproductviewState extends State<Singleproductview> {
             widget.product.status='ended';
           });
           showDiag(context,widget.product.highBidderName,widget.product.currentPrice.toString());
+          _timer?.cancel();
           return;
         }
         _timer?.cancel();
       }
       } catch (e) {
         print('Error in statusCheck: $e');
-        timer.cancel();
+        _timer?.cancel();
       }
     });
   }
@@ -438,7 +445,7 @@ class timer extends StatefulWidget {
 
 class _timerState extends State<timer> {
   late int _remainingTime;
-  late Timer _timer;
+  late Timer _timer1;
 
   @override
   void initState() {
@@ -447,13 +454,14 @@ class _timerState extends State<timer> {
     _startTimer();
   }
 
+
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer1 = Timer.periodic(Duration(seconds: 1), (timer) {
 
       setState(() {
         _remainingTime = widget.product.getRemainingTime();
         if (_remainingTime <= 0) {
-          _timer.cancel();
+          _timer1.cancel();
         }
       });
     });
@@ -461,7 +469,7 @@ class _timerState extends State<timer> {
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer1.cancel();
     super.dispose();
   }
 

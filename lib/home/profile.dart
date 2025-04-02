@@ -1,7 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../classes/Product.dart';
 import '../classes/user.dart';
+import '../custom stuffs/buttons.dart';
+import '../main.dart';
 
 class profile extends StatelessWidget {
 final String uid;
@@ -54,12 +58,101 @@ final String uid;
                     SizedBox(height: 20,),
                     Text("Address: ${user.address}"),
                     SizedBox(height: 20,),
+                    outlinedButton(text: "Show My Products",
+                    //  icon: Icons.login,
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => showMyItems(),));
+                      },
+                    //  color: Colors.green,
+                    //  textColor: Colors.white,
+              )
 
                   ],
                 );
 
             },),
     )
+    );
+  }
+}
+
+
+class showMyItems extends StatelessWidget {
+  const showMyItems({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Text("My Items"),
+      ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('products')
+            .where("status", isEqualTo: "ended")
+            .where("highBidderId", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(child: Text('No products available.'));
+          }
+
+          final products = snapshot.data!.docs.map((doc) => Product.fromFirestore(doc)).toList();
+
+          return ListView.builder(
+            itemCount: products.length,
+            itemBuilder: (context, index) {
+              final product = products[index];
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.black.withAlpha(40), width: 2),
+                ),
+                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(product.imageUrl!),
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      height: 100,
+                      width: 100,
+                    ),
+                    Column(
+                      //  crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Title: ${product.name}', style: TextStyle(fontSize: 6)),
+
+                      ],
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: Text('Pay now', style: TextStyle(color: Colors.white,fontSize: 12)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      )
     );
   }
 }

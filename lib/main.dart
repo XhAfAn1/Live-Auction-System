@@ -9,6 +9,7 @@ import 'package:liveauctionsystem/home/homepage.dart';
 import 'package:liveauctionsystem/wrapper.dart';
 //import 'package:supabase_flutter/supabase_flutter.dart';
 import 'firebase/firebase_options.dart';
+import 'login signup/login.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -76,3 +77,79 @@ void stopMonitoring() {
   _timer?.cancel();
 }
 
+
+showLogDiag(context){
+  showDialog(context: context,
+    builder: (context) =>
+        AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20), // Rounded corners
+          ),
+          backgroundColor: Colors.white,
+          title: Column(
+            children: [
+              Icon(
+                Icons.warning_amber_rounded,
+                color: Colors.orangeAccent,
+                size: 50, // Large warning icon
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'You are not logged in',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            'Please log in to access this feature.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, color: Colors.black54),
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            Wrap(
+              spacing: 10,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => login()),
+                    );
+                  },
+                  child: const Text(
+                    "Login",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    side: BorderSide(color: Colors.grey.shade400),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Cancel"),
+                ),
+              ],
+            ),
+          ],
+        ),
+  );
+
+
+
+}
