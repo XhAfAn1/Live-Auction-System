@@ -40,12 +40,27 @@ dependencies:
   intl: ^0.18.0
   image_picker: ^1.1.2
   firebase_storage: ^12.4.4
+  flutter_launcher_icons: ^0.14.3
 
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon.jpg"
+  web:
+    generate: true
+    image_path: "assets/icon.jpg"
+    background_color: "#hexcode"
+    theme_color: "#hexcode"
+  windows:
+    generate: true
+    image_path: "assets/icon.jpg"
+    icon_size: 48 # min:48, max:256, default: 48
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

@@ -7,71 +7,84 @@ import '../classes/user.dart';
 import '../custom stuffs/buttons.dart';
 import '../main.dart';
 
-class profile extends StatelessWidget {
+class profile extends StatefulWidget {
 final String uid;
   const profile({super.key, required this.uid});
 
   @override
+  State<profile> createState() => _profileState();
+}
+
+class _profileState extends State<profile> {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return RefreshIndicator(
+      onRefresh: ()async{
+        await Future.delayed(Duration(seconds: 0));
+        setState(() {
+
+        });
+      },
+      child: Scaffold(
         backgroundColor: Colors.white,
-        title: Text("Profile"),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: Text("Profile"),
+        ),
+        body: Center(
+          child: FutureBuilder<DocumentSnapshot>(future: FirebaseFirestore.instance.collection("Users").doc(widget.uid).get(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.grey[300],
+                    child: CircularProgressIndicator(), // Show a loading indicator
+                  );
+                }
+
+                if (!snapshot.hasData || !snapshot.data!.exists) {
+                  return Text("No Data");
+                }
+
+
+                UserModel user= UserModel.fromJson(snapshot.data!.data() as Map<String, dynamic>);
+                  return ListView(
+                    padding: EdgeInsets.all(20),
+                    scrollDirection: Axis.vertical,
+                    children: [
+                      SizedBox(height: 20,),
+                      CircleAvatar(
+                        radius: 80,
+                        backgroundImage: user.profileImageUrl!="" ? NetworkImage(user.profileImageUrl):null,
+                        backgroundColor: Colors.grey[300],
+                        child: (user.profileImageUrl == "" )
+                            ? Icon(Icons.person, size: 70, color: Colors.white)
+                            : null,
+                      ),
+                      SizedBox(height: 20,),
+                      Text("Name: ${user.name}"),
+                      SizedBox(height: 20,),
+                      Text("Email: ${user.email}"),
+                      SizedBox(height: 20,),
+                      Text("Phone Number: ${user.phoneNumber}"),
+                      SizedBox(height: 20,),
+                      Text("Address: ${user.address}"),
+                      SizedBox(height: 20,),
+                      outlinedButton(text: "Show My Products",
+                      //  icon: Icons.login,
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => showMyItems(),));
+                        },
+                      //  color: Colors.green,
+                      //  textColor: Colors.white,
+                )
+
+                    ],
+                  );
+
+              },),
+      )
       ),
-      body: Center(
-        child: FutureBuilder<DocumentSnapshot>(future: FirebaseFirestore.instance.collection("Users").doc(uid).get(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.grey[300],
-                  child: CircularProgressIndicator(), // Show a loading indicator
-                );
-              }
-
-              if (!snapshot.hasData || !snapshot.data!.exists) {
-                return Text("No Data");
-              }
-
-
-              UserModel user= UserModel.fromJson(snapshot.data!.data() as Map<String, dynamic>);
-                return ListView(
-                  padding: EdgeInsets.all(20),
-                  scrollDirection: Axis.vertical,
-                  children: [
-                    SizedBox(height: 20,),
-                    CircleAvatar(
-                      radius: 80,
-                      backgroundImage: user.profileImageUrl!="" ? NetworkImage(user.profileImageUrl):null,
-                      backgroundColor: Colors.grey[300],
-                      child: (user.profileImageUrl == "" )
-                          ? Icon(Icons.person, size: 70, color: Colors.white)
-                          : null,
-                    ),
-                    SizedBox(height: 20,),
-                    Text("Name: ${user.name}"),
-                    SizedBox(height: 20,),
-                    Text("Email: ${user.email}"),
-                    SizedBox(height: 20,),
-                    Text("Phone Number: ${user.phoneNumber}"),
-                    SizedBox(height: 20,),
-                    Text("Address: ${user.address}"),
-                    SizedBox(height: 20,),
-                    outlinedButton(text: "Show My Products",
-                    //  icon: Icons.login,
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => showMyItems(),));
-                      },
-                    //  color: Colors.green,
-                    //  textColor: Colors.white,
-              )
-
-                  ],
-                );
-
-            },),
-    )
     );
   }
 }
