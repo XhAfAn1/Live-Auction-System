@@ -13,7 +13,7 @@ class Product {
   String highBidderName;
   final String sellerName;
   final DateTime auctionStartTime;
-  final DateTime auctionEndTime;
+  DateTime auctionEndTime;
   final String? imageUrl;
   final String? category;
   String status;
@@ -56,7 +56,7 @@ class Product {
 
         // Save bid details in Firestore
         //await
-        FirebaseFirestore.instance
+       await FirebaseFirestore.instance
             .collection('products')
             .doc(productId)
             .collection("biders")
@@ -67,14 +67,14 @@ class Product {
           "timestamp": FieldValue.serverTimestamp(),
           "bid": bidPrice
         });
-        //await
+        await
         FirebaseFirestore.instance
             .collection('products')
-            .doc(productId).update({"currentPrice":bidPrice});
+            .doc(productId).update({"currentPrice":bidPrice,"highBidderName":userName,"highBidderId":userId});
 
-        FirebaseFirestore.instance
-            .collection('products')
-            .doc(productId).update({"highBidderName":userName,"highBidderId":userId});
+        // FirebaseFirestore.instance
+        //     .collection('products')
+        //     .doc(productId).update({"highBidderName":userName,"highBidderId":userId});
 
         currentPrice=bidPrice;
 
@@ -100,7 +100,6 @@ class Product {
     }
   }
 
-  // Method to get the remaining time in seconds
   int? getTimeRemaining() {
     final now = DateTime.now();
     if (now.isBefore(auctionEndTime)) {
@@ -110,6 +109,7 @@ class Product {
   }
 
   int getRemainingTime() {
+   // auctionEndTime = FirebaseFirestore
     final now = DateTime.now();
     return auctionEndTime.difference(now).inSeconds;
   }

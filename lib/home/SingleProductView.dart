@@ -138,6 +138,10 @@ class _SingleproductviewState extends State<Singleproductview> {
                               return;
                             }
                             widget.product.placeBid(context, bidAmount, widget.product.status);
+                            // widget.product.auctionEndTime=  widget.product.auctionEndTime.add(Duration(minutes: 5));
+                            // print( widget.product.auctionEndTime);
+                            // await FirebaseFirestore.instance.collection("products").doc(widget.product.productId).update({"auctionEndTime":widget.product.auctionEndTime.toIso8601String()});
+                            //
                             _timer?.cancel();
                           },
                           child: Text("Bid"),

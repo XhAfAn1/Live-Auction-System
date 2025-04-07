@@ -179,7 +179,7 @@ class _HomePageState extends State<HomePage> {
                   dividerColor: Colors.white,
                   splashFactory: NoSplash.splashFactory,
                   indicatorColor: Colors.white,
-                  labelStyle: TextStyle(color: Colors.blue,fontSize: 12,fontWeight: FontWeight.bold),
+                  labelStyle: TextStyle(color: Color(0xB2ABD14C),fontSize: 13,fontWeight: FontWeight.bold),
 
 
                   tabs: [
