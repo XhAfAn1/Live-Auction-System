@@ -41,6 +41,7 @@ dependencies:
   image_picker: ^1.1.2
   firebase_storage: ^12.4.4
   flutter_launcher_icons: ^0.14.3
+  bkash: ^0.0.2
 
 
 

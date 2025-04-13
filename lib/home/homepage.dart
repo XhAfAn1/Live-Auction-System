@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String searchName = "";
   final boxheight=290.0;
 
   int boxcount() {
@@ -227,38 +228,64 @@ class _HomePageState extends State<HomePage> {
             body:TabBarView(
               children: [
                 Container(
-                  child: StreamBuilder<QuerySnapshot>(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Container(
+                          child: TextField(
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              hintText: 'Search',
+                              prefixIcon: Icon(Icons.search),
 
-                    //stream: _firestore.collection('products').where("status",isEqualTo: "active").orderBy("auctionEndTime",descending: false).snapshots(),
-                    stream: _firestore.collection('products').orderBy("auctionEndTime",descending: false).snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
-                      }
 
-                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return Center(child: Text('No products available.'));
-                      }
-                      final products = snapshot.data!.docs.map((doc) => Product.fromFirestore(doc)).toList();
+                            ),
+                          //  controller: search,
+                            onChanged: searched
 
-                     // monitorAuctionStatus();
 
-                      return GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          //childAspectRatio: 0.75,
-                          mainAxisExtent: boxheight,
-                          crossAxisCount: boxcount(),
-
+                          ),
+                        // color: Colors.red,
+                          width: double.infinity,
+                          height: 50,
                         ),
+                      ),
+                      Expanded(
+                        child: StreamBuilder<QuerySnapshot>(
+                          //stream: _firestore.collection('products').where("status",isEqualTo: "active").orderBy("auctionEndTime",descending: false).snapshots(),
+                          stream: searchName!="" ? _firestore.collection('products').where("name", isEqualTo: searchName).snapshots() : _firestore.collection('products').orderBy("auctionEndTime",descending: false).snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            }
 
-                        itemCount: products.length,
-                        itemBuilder: (context, index) {
-                          final product = products[index];
-                          return ProductCard(product: product);
-                        },
-                      );
-                    },
-                  ),
+                            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                              return Center(child: Text('No products available.'));
+                            }
+                            final products = snapshot.data!.docs.map((doc) => Product.fromFirestore(doc)).toList();
+
+                            // monitorAuctionStatus();
+
+                            return GridView.builder(
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                //childAspectRatio: 0.75,
+                                mainAxisExtent: boxheight,
+                                crossAxisCount: boxcount(),
+
+                              ),
+
+                              itemCount: products.length,
+                              itemBuilder: (context, index) {
+                                final product = products[index];
+                                return ProductCard(product: product);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  )
                 ),
                 Container(
                   child: StreamBuilder<QuerySnapshot>(
@@ -367,6 +394,14 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  void searched(String value) {
+    setState(() {
+      searchName=value;
+    });
+
+    print(value);
   }
 }
 

@@ -199,7 +199,9 @@ class _SingleproductviewState extends State<Singleproductview> {
 
 
 
-                      return FutureBuilder(future: func(email,bidData,index), builder: (context, snapshot) {
+                      return FutureBuilder(
+                        future: func(email,bidData,index),
+                        builder: (context, snapshot) {
                         email=snapshot.data ?? "Loading..";
                        return ListTile(
                           title: Text('$name:  $email', style: const TextStyle(color: Colors.black)),

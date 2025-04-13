@@ -6,6 +6,8 @@ import '../classes/Product.dart';
 import '../classes/user.dart';
 import '../custom stuffs/buttons.dart';
 import '../main.dart';
+import '../payment/checkout.dart';
+import '../payment/payment_helper.dart';
 
 class profile extends StatefulWidget {
 final String uid;
@@ -152,7 +154,11 @@ class showMyItems extends StatelessWidget {
                       ],
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        final id= DateTime.parse(product.productId);
+                        onButtonTap('bkash',context,product.currentPrice,id.millisecondsSinceEpoch.toString());
+                        //Navigator.push(context, MaterialPageRoute(builder: (context) => Checkout(),));
+                      },
                       child: Text('Pay now', style: TextStyle(color: Colors.white,fontSize: 12)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
