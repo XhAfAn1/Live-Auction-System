@@ -16,6 +16,7 @@ class login extends StatefulWidget {
 class _loginState extends State<login> {
   String btn_text="Log in";
   bool isloading=false;
+  bool loading=false;
   @override
   Widget build(BuildContext context) {
 
@@ -23,6 +24,13 @@ class _loginState extends State<login> {
 
     TextEditingController email = TextEditingController();
     TextEditingController password = TextEditingController();
+    if(loading)
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    else
     return Scaffold(
       appBar: AppBar(
         title: Text("login"),
@@ -67,6 +75,7 @@ class _loginState extends State<login> {
               onPressed: () async{
 
                 setState(() {
+                  loading=true;
                   btn_text="Logging in...";
                 });
                isloading=await Authentication().signin(email: email.text.trim(), password: password.text,context: context);
@@ -74,10 +83,12 @@ class _loginState extends State<login> {
               if(!isloading){
                 Timer(Duration(milliseconds: 50), () {
                   setState(() {
+                    loading=false;
                     btn_text="Log in";
                   });
                 });
               }
+
 
               },
               child: Text(btn_text,

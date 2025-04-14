@@ -46,7 +46,7 @@ class _signupState extends State<signup> {
         url = await FirebaseStorage.instance.ref(path).getDownloadURL();
       }
 
-      UserModel newUser=UserModel(id: credential.user!.uid, name: name.text, email: email.text, profileImageUrl: url);
+      UserModel newUser=UserModel(id: credential.user!.uid, name: name.text,admin: false, email: email.text, profileImageUrl: url);
       await FirebaseFirestore.instance.collection("Users").doc(credential.user!.uid).set(newUser.toJson());
       await Authentication().signout(context);
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => login(),));

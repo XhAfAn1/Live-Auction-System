@@ -6,10 +6,12 @@ class UserModel {
   String phoneNumber;
   String address;
   DateTime createdAt;
+  bool admin;
 
   UserModel({
     required this.id,
     required this.name,
+    required this.admin,
     required this.email,
     this.profileImageUrl = '',
     this.phoneNumber = '',
@@ -22,6 +24,7 @@ class UserModel {
     return {
       'id': id,
       'name': name,
+      'admin': admin,
       'email': email,
       'profileImageUrl': profileImageUrl,
       'phoneNumber': phoneNumber,
@@ -35,6 +38,7 @@ class UserModel {
     return UserModel(
       id: json['id'] ?? '',
       name: json['name'] ?? '',
+      admin: json['admin'] ?? '',
       email: json['email'] ?? '',
       profileImageUrl: json['profileImageUrl'] ?? '',
       phoneNumber: json['phoneNumber'] ?? '',
