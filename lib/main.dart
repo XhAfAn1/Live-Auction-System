@@ -35,7 +35,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(fontFamily: 'Poppins'),
       debugShowCheckedModeBanner: false,
     //  theme: ThemeData(colorScheme: LightDarkMode.dark),
-      home: HomePage(), // Pass initial user to wrapper
+      home: Wrapper(), // Pass initial user to wrapper
+     // home: HomePage(), // Pass initial user to wrapper
     );
   }
 }

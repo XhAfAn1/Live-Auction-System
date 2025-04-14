@@ -123,12 +123,17 @@ class _HomePageState extends State<HomePage> {
                         return CircleAvatar(
                           radius: 20,
                           backgroundColor: Colors.grey[300],
-                          child: CircularProgressIndicator(),
+                          child: CircularProgressIndicator(
+                            padding: EdgeInsets.all(13),
+                            strokeWidth: 0.7,
+                          ),
                         );
                       }
 
                       if (!snapshot.hasData || !snapshot.data!.exists) {
                         return InkWell(
+                          splashFactory: NoSplash.splashFactory,
+                          radius: 50,
                           onTap: (){
                             if(FirebaseAuth.instance.currentUser == null)
                               showLogDiag(context);
@@ -146,6 +151,9 @@ class _HomePageState extends State<HomePage> {
                       String? imageUrl = snapshot.data!.get("profileImageUrl");
 
                       return InkWell(
+                        splashFactory: NoSplash.splashFactory,
+                        radius: 50,
+
                         onTap: (){
                           if(FirebaseAuth.instance.currentUser == null)
                             showLogDiag(context);
@@ -237,6 +245,7 @@ class _HomePageState extends State<HomePage> {
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               hintText: 'Search',
+                              hintStyle: TextStyle(color: Colors.grey,fontSize: 14),
                               prefixIcon: Icon(Icons.search),
 
 
@@ -248,7 +257,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         // color: Colors.red,
                           width: double.infinity,
-                          height: 50,
+                          height: 40,
                         ),
                       ),
                       Expanded(

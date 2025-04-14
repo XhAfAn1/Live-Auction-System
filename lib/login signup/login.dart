@@ -27,6 +27,7 @@ class _loginState extends State<login> {
     if(loading)
       return Scaffold(
         body: Center(
+         // child: Image.asset("assets/hammer.gif"),
           child: CircularProgressIndicator(),
         ),
       );
