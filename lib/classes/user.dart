@@ -38,12 +38,15 @@ class UserModel {
     return UserModel(
       id: json['id'] ?? '',
       name: json['name'] ?? '',
-      admin: json['admin'] ?? '',
+      admin: json['admin'] is bool
+          ? json['admin']
+          : json['admin'].toString().toLowerCase() == 'true',
       email: json['email'] ?? '',
       profileImageUrl: json['profileImageUrl'] ?? '',
       phoneNumber: json['phoneNumber'] ?? '',
       address: json['address'] ?? '',
-      createdAt: DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
+      createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
     );
   }
+
 }
