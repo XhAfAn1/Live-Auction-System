@@ -31,7 +31,6 @@ class _AddProductFormState extends State<AddProductForm> {
   String btnText = "Add Product";
   File? image;
   bool isUploading = false;
-
   String _imageUrl = '';
   String _stats = '';
   String _sellerId = FirebaseAuth.instance.currentUser!.uid;
@@ -142,7 +141,7 @@ class _AddProductFormState extends State<AddProductForm> {
         'status': _stats,
       };
 
-      await _firestore.collection('products').doc(DateTime.now().toString()).set(productData);
+      await _firestore.collection('request').doc(DateTime.now().toString()).set(productData);
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Product added successfully!')));
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
