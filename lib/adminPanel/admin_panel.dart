@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:liveauctionsystem/classes/user.dart';
 
@@ -311,12 +312,14 @@ class _admin_panelState extends State<admin_panel> {
           } else if (snapshot.hasData) {
             final docs = snapshot.data!.docs;
             final products =
-                docs.map((doc) => Product.fromFirestore(doc)).toList();
+            docs.map((doc) => Product.fromFirestore(doc)).toList();
             return ListView.builder(
               padding: EdgeInsets.all(16),
               itemCount: products.length,
               itemBuilder: (context, index) {
                 final product = products[index];
+                final docId = docs[index].id;
+
                 return Card(
                   elevation: 3,
                   shape: RoundedRectangleBorder(
@@ -335,13 +338,12 @@ class _admin_panelState extends State<admin_panel> {
                             width: 80,
                             height: 80,
                             fit: BoxFit.cover,
-                            errorBuilder:
-                                (context, error, stackTrace) => Container(
-                                  width: 80,
-                                  height: 80,
-                                  color: Colors.grey[300],
-                                  child: Icon(Icons.image_not_supported),
-                                ),
+                            errorBuilder: (context, error, stackTrace) => Container(
+                              width: 80,
+                              height: 80,
+                              color: Colors.grey[300],
+                              child: Icon(Icons.image_not_supported),
+                            ),
                           ),
                         ),
                         SizedBox(width: 16),
@@ -370,6 +372,53 @@ class _admin_panelState extends State<admin_panel> {
                                 "Ends: ${product.auctionEndTime.toLocal().toString().split(' ')[0]}",
                               ),
                               Text("Status: ${product.status}"),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: IconButton(
+                                  icon: Icon(Icons.delete, color: Colors.red),
+                                  onPressed: () async {
+                                    final confirm = await showDialog<bool>(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text("Delete Product"),
+                                        content: Text("Are you sure you want to delete this product ?"),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(context, false),
+                                            child: Text("Cancel"),
+                                          ),
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(context, true),
+                                            child: Text("Delete", style: TextStyle(color: Colors.red)),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+
+                                    if (confirm == true) {
+                                      try {
+                                        // Delete Firestore doc
+                                        await FirebaseFirestore.instance
+                                            .collection("products")
+                                            .doc(docId)
+                                            .delete();
+
+                                        // Delete image from Firebase Storage
+                                        final imageRef = FirebaseStorage.instance.refFromURL(product.imageUrl);
+                                        await imageRef.delete();
+
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text('Product deleted')),
+                                        );
+                                      } catch (e) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text('Failed to delete product')),
+                                        );
+                                      }
+                                    }
+                                  },
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -386,8 +435,9 @@ class _admin_panelState extends State<admin_panel> {
       );
     }
 
+
     //show all reuqest
-    if(id == 4){
+    if (id == 4) {
       return StreamBuilder(
         stream: FirebaseFirestore.instance.collection("request").snapshots(),
         builder: (context, snapshot) {
@@ -497,9 +547,80 @@ class _admin_panelState extends State<admin_panel> {
       );
     }
 
-    if(id == 5){
+    if (id == 5) {
 
     }
+    // show all item storage
+    if (id == 6) {
+      return FutureBuilder(
+        future: FirebaseStorage.instance.ref('itemPhoto/').listAll(),
+        builder: (context, AsyncSnapshot<ListResult> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasData && snapshot.data!.items.isNotEmpty) {
+            final items = snapshot.data!.items;
+
+            return FutureBuilder(
+              future: Future.wait(items.map((ref) async {
+                final url = await ref.getDownloadURL();
+                return {'ref': ref, 'url': url};
+              })),
+              builder: (context, AsyncSnapshot<List<Map<String, dynamic>>> urlSnapshot) {
+                if (urlSnapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (urlSnapshot.hasData) {
+                  final imageEntries = urlSnapshot.data!;
+
+                  return GridView.builder(
+                    shrinkWrap: true,
+                    itemCount: imageEntries.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                    ),
+                    itemBuilder: (context, index) {
+                      final imageEntry = imageEntries[index];
+                      final imageUrl = imageEntry['url'];
+                      final imageRef = imageEntry['ref'] as Reference;
+
+                      return Stack(
+                        children: [
+                          Positioned.fill(
+                            child: Image.network(imageUrl, fit: BoxFit.cover),
+                          ),
+                          Positioned(
+                            top: 5,
+                            right: 5,
+                            child: CircleAvatar(
+                              backgroundColor: Colors.black54,
+                              child: IconButton(
+                                icon: Icon(Icons.delete, color: Colors.white, size: 18),
+                                onPressed: () async {
+                                  await imageRef.delete();
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Image deleted')));
+                                  // Refresh UI after deletion
+                                  (context as Element).markNeedsBuild();
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  return Text("Failed to load image URLs.");
+                }
+              },
+            );
+          } else {
+            return Text("No photos found.");
+          }
+        },
+      );
+    }
+
   }
 
   @override
@@ -646,6 +767,15 @@ class _admin_panelState extends State<admin_panel> {
                 //   pid = 5;
                 // });
                 //
+              },
+            ),
+            ListTile(
+              title: Text("Show All Item Photo"),
+              onTap: () {
+                setState(() {
+                  pid = 6;
+                });
+                Navigator.pop(context);
               },
             ),
             if (FirebaseAuth.instance.currentUser != null)

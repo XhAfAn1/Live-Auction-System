@@ -14,7 +14,7 @@ class Product {
   final String sellerName;
   final DateTime auctionStartTime;
   DateTime auctionEndTime;
-  final String? imageUrl;
+  final String imageUrl;
   final String? category;
   String status;
 
@@ -30,7 +30,7 @@ class Product {
     required this.highBidderName,
     required this.auctionStartTime,
     required this.auctionEndTime,
-    this.imageUrl,
+    required this.imageUrl,
     this.category,
     this.status = 'active',
   });

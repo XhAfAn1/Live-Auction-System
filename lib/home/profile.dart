@@ -1,3 +1,4 @@
+import 'package:bkash/bkash.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,72 +21,117 @@ final String uid;
 class _profileState extends State<profile> {
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: ()async{
-        await Future.delayed(Duration(seconds: 0));
-        setState(() {
-
-        });
-      },
-      child: Scaffold(
+    return Scaffold(
+      backgroundColor: Color(0xFFF6F8FA),
+      appBar: AppBar(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: Text("Profile"),
-        ),
-        body: Center(
-          child: FutureBuilder<DocumentSnapshot>(future: FirebaseFirestore.instance.collection("Users").doc(widget.uid).get(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.grey[300],
-                    child: CircularProgressIndicator(), // Show a loading indicator
-                  );
-                }
+        elevation: 1,
+        title: Text("Profile", style: TextStyle(color: Colors.black)),
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await Future.delayed(Duration(milliseconds: 200));
+          setState(() {});
+        },
+        child: FutureBuilder<DocumentSnapshot>(
+          future: FirebaseFirestore.instance.collection("Users").doc(widget.uid).get(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
 
-                if (!snapshot.hasData || !snapshot.data!.exists) {
-                  return Text("No Data");
-                }
+            if (!snapshot.hasData || !snapshot.data!.exists) {
+              return Center(child: Text("No Data"));
+            }
 
+            UserModel user = UserModel.fromJson(snapshot.data!.data() as Map<String, dynamic>);
 
-                UserModel user= UserModel.fromJson(snapshot.data!.data() as Map<String, dynamic>);
-                  return ListView(
-                    padding: EdgeInsets.all(20),
-                    scrollDirection: Axis.vertical,
+            return ListView(
+              padding: EdgeInsets.all(20),
+              children: [
+                SizedBox(height: 20),
+                Center(
+                  child: Stack(
+                    alignment: Alignment.center,
                     children: [
-                      SizedBox(height: 20,),
                       CircleAvatar(
-                        radius: 80,
-                        backgroundImage: user.profileImageUrl!="" ? NetworkImage(user.profileImageUrl):null,
+                        radius: 70,
                         backgroundColor: Colors.grey[300],
-                        child: (user.profileImageUrl == "" )
-                            ? Icon(Icons.person, size: 70, color: Colors.white)
+                        backgroundImage: user.profileImageUrl != "" ? NetworkImage(user.profileImageUrl) : null,
+                        child: user.profileImageUrl == ""
+                            ? Icon(Icons.person, size: 60, color: Colors.white)
                             : null,
                       ),
-                      SizedBox(height: 20,),
-                      Text("Name: ${user.name}"),
-                      SizedBox(height: 20,),
-                      Text("Email: ${user.email}"),
-                      SizedBox(height: 20,),
-                      Text("Phone Number: ${user.phoneNumber}"),
-                      SizedBox(height: 20,),
-                      Text("Address: ${user.address}"),
-                      SizedBox(height: 20,),
-                      outlinedButton(text: "Show My Products",
-                      //  icon: Icons.login,
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => showMyItems(),));
-                        },
-                      //  color: Colors.green,
-                      //  textColor: Colors.white,
-                )
-
                     ],
-                  );
+                  ),
+                ),
+                SizedBox(height: 30),
+                Card(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        buildInfoRow("Name", user.name),
+                        buildInfoRow("Email", user.email),
+                        buildInfoRow("Phone", user.phoneNumber),
+                        buildInfoRow("Address", user.address),
+                        buildInfoRow("User ID", user.id),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 30),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    icon: Icon(Icons.inventory),
+                    label: Text("Show My Products"),
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => showMyItems()));
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
 
-              },),
-      )
+  Widget buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[600],
+              )),
+          SizedBox(height: 5),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
+          Divider(),
+        ],
       ),
     );
   }
@@ -156,7 +202,8 @@ class showMyItems extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () {
                         final id= DateTime.parse(product.productId);
-                        onButtonTap('bkash',context,product.currentPrice,id.millisecondsSinceEpoch.toString());
+                        //onButtonTap('bkash',context,product.currentPrice,id.millisecondsSinceEpoch.toString());
+                        bkashPayment(context,product.currentPrice,id.millisecondsSinceEpoch.toString());
                         //Navigator.push(context, MaterialPageRoute(builder: (context) => Checkout(),));
                       },
                       child: Text('Pay now', style: TextStyle(color: Colors.white,fontSize: 12)),
@@ -173,5 +220,26 @@ class showMyItems extends StatelessWidget {
         },
       )
     );
+  }
+
+  bkashPayment(context,int totalPrice,String name) async {
+    final bkash = Bkash(
+      // bkashCredentials: BkashCredentials(username: username, password: password, appKey: appKey, appSecret: appSecret),
+      logResponse: true,
+    );
+
+    try {
+      final response = await bkash.pay(
+          context: context,
+          amount: totalPrice.toDouble(),
+          merchantInvoiceNumber: '$name',
+          payerReference: 'Aucsy00$name'
+      );
+
+      print(response.trxId);
+      print(response.paymentId);
+    } on BkashFailure catch (e) {
+      print(e.message);
+    }
   }
 }
