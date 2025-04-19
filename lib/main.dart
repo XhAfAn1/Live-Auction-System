@@ -3,11 +3,14 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:liveauctionsystem/app%20datas/theme%20data.dart';
 import 'package:liveauctionsystem/home/homepage.dart';
 import 'package:liveauctionsystem/wrapper.dart';
 //import 'package:supabase_flutter/supabase_flutter.dart';
+import 'firebase/firebase message api.dart';
 import 'firebase/firebase_options.dart';
 import 'login signup/login.dart';
 void main() async {
@@ -15,6 +18,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+ // await FirebaseApi().initNitifications();
 
   // await Supabase.initialize(
   //   url: 'https://kwhmontckigovxyadkrf.supabase.co',   // Replace with your Supabase project URL
@@ -32,7 +37,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(fontFamily: 'Poppins'),
+      theme: ThemeData(fontFamily: 'Poppins',colorScheme: ColorScheme(brightness: Brightness.light, primary: Color(0xffabd14c), onPrimary: Colors.white, secondary: Colors.white, onSecondary: Colors.white, error: Colors.red, onError: Colors.red, surface: Colors.white, onSurface: Colors.black87)),
       debugShowCheckedModeBanner: false,
     //  theme: ThemeData(colorScheme: LightDarkMode.dark),
       home: Wrapper(), // Pass initial user to wrapper
@@ -118,7 +123,7 @@ showLogDiag(context){
               children: [
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
+                    backgroundColor: Color(0xff0a3a0b),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),

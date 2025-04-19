@@ -35,13 +35,11 @@ class _admin_panelState extends State<admin_panel> {
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 20,
-                  crossAxisSpacing: 20,
+                  crossAxisSpacing: 10,
+                  mainAxisExtent: 100
                 ),
                 children: [
                   Container(
-                    width: 170,
-                    height: 150,
-                    color: Colors.red[200],
                     child: FutureBuilder(
                       future:
                           FirebaseFirestore.instance
@@ -50,43 +48,50 @@ class _admin_panelState extends State<admin_panel> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Total Products"),
-                                Expanded(
-                                  child: Center(
-                                    child: Text(
-                                      "0",
-                                      style: TextStyle(fontSize: 30),
+                          return Card(
+                            elevation: 0,
+                            color: Colors.red[50],
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Total Products"),
+                                  Expanded(
+                                    child: Center(
+                                      child: Text(
+                                        "0",
+                                        style: TextStyle(fontSize: 30),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           );
                         } else if (snapshot.hasData) {
-                          // return Center(child: Text("Total Products: ${snapshot.data!.docs.length}"));
-                          return Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Total Products"),
-                                Expanded(
-                                  child: Center(
-                                    child: Text(
-                                      "${snapshot.data!.docs.length}",
-                                      style: TextStyle(fontSize: 30),
+                          return Card(
+                            elevation: 0,
+                            color: Colors.red[50],
+                            child: Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Total Products"),
+                                    Expanded(
+                                      child: Center(
+                                        child: Text(
+                                          "${snapshot.data!.docs.length}",
+                                          style: TextStyle(fontSize: 30),
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
                           );
                         }
                         return Text("Data not found");
@@ -94,51 +99,68 @@ class _admin_panelState extends State<admin_panel> {
                     ),
                   ),
                   Container(
-                    width: 170,
-                    height: 150,
-                    color: Colors.green[200],
+
+
                     child: FutureBuilder(
                       future:
                           FirebaseFirestore.instance.collection("Users").get(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Total Users"),
-                                Expanded(
-                                  child: Center(
-                                    child: Text(
-                                      "0",
-                                      style: TextStyle(fontSize: 30),
+                          return Card(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),side: BorderSide(width: 1.5,color: Colors.black12)),
+                            elevation: 0,
+                            color: Colors.white54,
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [Icon(Icons.person,color: Colors.black87,size: 20,),
+                                      SizedBox(width: 5,),
+                                      Text("Total Users"),],
+                                  ),
+                                  Expanded(
+                                    child: Center(
+                                      child: Text(
+                                        "0",
+                                        style: TextStyle(fontSize: 30),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           );
                         } else if (snapshot.hasData) {
                           // return Center(child: Text("Total Products: ${snapshot.data!.docs.length}"));
-                          return Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Total Users"),
-                                Expanded(
-                                  child: Center(
-                                    child: Text(
-                                      "${snapshot.data!.docs.length}",
-                                      style: TextStyle(fontSize: 30),
+                          return Card(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),side: BorderSide(width: 1.5,color: Colors.black12)),
+                            elevation: 0,
+                            color: Colors.white54,
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [Icon(Icons.person,color: Colors.black87,size: 20,),
+                                      SizedBox(width: 5,),
+                                      Text("Total Users"),],
+                                  ),
+                                  Expanded(
+                                    child: Center(
+                                      child: Text(
+                                        "${snapshot.data!.docs.length}",
+                                        style: TextStyle(fontSize: 30),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           );
                         }
@@ -147,9 +169,6 @@ class _admin_panelState extends State<admin_panel> {
                     ),
                   ),
                   Container(
-                    width: 170,
-                    height: 150,
-                    color: Colors.blue[200],
                     child: FutureBuilder(
                       future:
                           FirebaseFirestore.instance
@@ -158,22 +177,26 @@ class _admin_panelState extends State<admin_panel> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Total Sell"),
-                                Expanded(
-                                  child: Center(
-                                    child: Text(
-                                      "0 ৳",
-                                      style: TextStyle(fontSize: 30),
+                          return Card(
+                            elevation: 0,
+                            color: Colors.blue[50],
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Total Sell"),
+                                  Expanded(
+                                    child: Center(
+                                      child: Text(
+                                        "0 ৳",
+                                        style: TextStyle(fontSize: 30),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           );
                         } else if (snapshot.hasData) {
@@ -187,33 +210,37 @@ class _admin_panelState extends State<admin_panel> {
                               return prev;
                             }
                           });
-
-                          return Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Total Sell"),
-                                Expanded(
-                                  child: Center(
-                                    child: Text(
-                                      "$totalSum ৳",
-                                      style: TextStyle(fontSize: 30),
+                          return Card(
+                            elevation: 0,
+                            color: Colors.blue[50],
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Total Sell"),
+                                  Expanded(
+                                    child: Center(
+                                      child: Text(
+                                        "$totalSum ৳",
+                                        style: TextStyle(fontSize: 30),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           );
+
                         }
                         return Text("Data not found");
                       },
                     ),
                   ),
-                  Container(width: 170, height: 150, color: Colors.yellow[200]),
-                  Container(width: 170, height: 150, color: Colors.teal[200]),
-                  Container(width: 170, height: 150, color: Colors.pink[200]),
+                  Card(elevation: 0, color: Colors.yellow[50]),
+                  Card(elevation: 0, color: Colors.teal[50]),
+                  Card(elevation: 0, color: Colors.pink[50]),
                 ],
               ),
             ),
@@ -238,6 +265,8 @@ class _admin_panelState extends State<admin_panel> {
               itemBuilder: (context, index) {
                 final user = users[index];
                 return Card(
+                  elevation: 0.5,
+                  color: Colors.grey.shade50,
                   margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   child: Column(
                     children: [
@@ -321,7 +350,8 @@ class _admin_panelState extends State<admin_panel> {
                 final docId = docs[index].id;
 
                 return Card(
-                  elevation: 3,
+                  elevation: 0.5,
+                  color: Colors.grey.shade50,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -460,7 +490,8 @@ class _admin_panelState extends State<admin_panel> {
               itemBuilder: (context, index) {
                 final product = products[index];
                 return Card(
-                  elevation: 3,
+                  elevation: 0.5,
+                  color: Colors.grey.shade50,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -626,7 +657,9 @@ class _admin_panelState extends State<admin_panel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text("Admin Panel"),
         actions: [
           //if(FirebaseAuth.instance.currentUser != null)
@@ -717,78 +750,123 @@ class _admin_panelState extends State<admin_panel> {
         ],
       ),
       drawer: Drawer(
+        shape: LinearBorder(),
         backgroundColor: Colors.white,
         width: 280,
-        child: ListView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 100),
-            ListTile(
-              title: Text("Home"),
-              onTap: () {
-                setState(() {
-                  pid = 1;
-                });
-                Navigator.pop(context);
-              },
+            // DrawerHeader(
+            // //   margin: EdgeInsets.zero,
+            // //   decoration: const BoxDecoration(
+            // //     // border: Border(
+            // //     //   bottom: BorderSide(color: Colors.grey, width: 0.2),
+            // //     // ),
+            // //   ),
+            //   child: Column(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children: const [
+            //       // CircleAvatar(
+            //       //   radius: 28,
+            //       //   backgroundImage: AssetImage('assets/avatar.png'), // Replace with your asset
+            //       // // ),
+            //       // SizedBox(height: 12),
+            //       // Text(
+            //       //   "Admin Panel",
+            //       //   style: TextStyle(
+            //       //     fontSize: 18,
+            //       //     fontWeight: FontWeight.w600,
+            //       //   ),
+            //       // ),
+            //
+            //     ],
+            //   ),
+            //  ),
+            SizedBox(
+              height: 50,
             ),
-            ListTile(
-              title: Text("show all user"),
-              onTap: () {
-                setState(() {
-                  pid = 2;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text("show all product"),
-              onTap: () {
-                setState(() {
-                  pid = 3;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text("Show All Request"),
-              onTap: () {
-                setState(() {
-                  pid = 4;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text("Add new Product"),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const AddProductForm(),));
-                // setState(() {
-                //   pid = 5;
-                // });
-                //
-              },
-            ),
-            ListTile(
-              title: Text("Show All Item Photo"),
-              onTap: () {
-                setState(() {
-                  pid = 6;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            if (FirebaseAuth.instance.currentUser != null)
-              IconButton(
-                onPressed: () {
-                  Authentication().signout(context);
-                },
-                icon: Icon(Icons.logout),
+            Expanded(
+              child: ListView(
+                children: [
+                  const Divider(height: 32, thickness: 0.5),
+                  ListTile(
+                    leading: Icon(Icons.dashboard_outlined, size: 22),
+                    title: Text("Dashboard", style: TextStyle(fontSize: 16)),
+                    onTap: () {
+                      setState(() {
+                        pid = 1;
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.person_outline, size: 22),
+                    title: Text("Users", style: TextStyle(fontSize: 16)),
+                    onTap: () {
+                      setState(() {
+                        pid = 2;
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.shopping_bag_outlined, size: 22),
+                    title: Text("Products", style: TextStyle(fontSize: 16)),
+                    onTap: () {
+                      setState(() {
+                        pid = 3;
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.request_page_outlined, size: 22),
+                    title: Text("Requests", style: TextStyle(fontSize: 16)),
+                    onTap: () {
+                      setState(() {
+                        pid = 4;
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.add_box_outlined, size: 22),
+                    title: Text("Add Product", style: TextStyle(fontSize: 16)),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const AddProductForm(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.photo_library_outlined, size: 22),
+                    title: Text("Item Photos", style: TextStyle(fontSize: 16)),
+                    onTap: () {
+                      setState(() {
+                        pid = 6;
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  const Divider(height: 32, thickness: 0.5),
+                  if (FirebaseAuth.instance.currentUser != null)
+                    ListTile(
+                      leading: Icon(Icons.logout, size: 22),
+                      title: Text("Logout", style: TextStyle(fontSize: 16)),
+                      onTap: () {
+                        Authentication().signout(context);
+                      },
+                    ),
+                ],
               ),
-            SizedBox(height: 20),
+            ),
           ],
         ),
       ),
+
       body: panelid(pid),
     );
   }

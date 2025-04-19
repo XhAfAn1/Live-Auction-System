@@ -94,7 +94,7 @@ class _signupState extends State<signup> {
                  Container(
                    height:40,
                    width: 40,
-                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(50),color: Colors.blue),
+                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(50),color: Color(0xff0a3a0b),),
 
                    child: IconButton(
                      onPressed: (){
@@ -111,21 +111,21 @@ class _signupState extends State<signup> {
                 decoration: InputDecoration(
                   label: Text("Name"),
                   border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey, width: 1.5),
+                   //   borderSide: BorderSide(color: Colors.grey, width: 1.5),
                       borderRadius: BorderRadius.all(Radius.circular(10))),
-                  hintText: "Enter Name",
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey, width: 1.5), // Default border color
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue, width: 2.0), // Border color when focused
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red, width: 1.5), // Border color when error occurs
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
+                //   hintText: "Enter Name",
+                //   enabledBorder: OutlineInputBorder(
+                // //    borderSide: BorderSide(color: Colors.grey, width: 1.5), // Default border color
+                //     borderRadius: BorderRadius.all(Radius.circular(10)),
+                //   ),
+                //   focusedBorder: OutlineInputBorder(
+                //     borderSide: BorderSide( width: 2.0), // Border color when focused
+                //     borderRadius: BorderRadius.all(Radius.circular(10)),
+                //   ),
+                //   errorBorder: OutlineInputBorder(
+                //     borderSide: BorderSide(color: Colors.red, width: 1.5), // Border color when error occurs
+                //     borderRadius: BorderRadius.all(Radius.circular(10)),
+                //   ),
                 ),
                 //
                 // validator: (value) {
@@ -140,21 +140,26 @@ class _signupState extends State<signup> {
                 decoration: InputDecoration(
                   label: Text("Email"),
                   border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey, width: 1.5),
+                  //    borderSide: BorderSide(color: Colors.grey, width: 1.5),
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                   hintText: "Enter Email Address",
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey, width: 1.5), // Default border color
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue, width: 2.0), // Border color when focused
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red, width: 1.5), // Border color when error occurs
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
+                  // enabledBorder: OutlineInputBorder(
+                  // //  borderSide: BorderSide(color: Colors.grey, width: 1.5), // Default border color
+                  //   borderRadius: BorderRadius.all(Radius.circular(10)),
+                  // ),
+                  // focusedBorder: OutlineInputBorder(
+                  //   borderSide: BorderSide( width: 2.0), // Border color when focused
+                  //   borderRadius: BorderRadius.all(Radius.circular(10)),
+                  // ),
+                  // errorBorder: OutlineInputBorder(
+                  //   borderSide: BorderSide(color: Colors.red, width: 1.5), // Border color when error occurs
+                  //   borderRadius: BorderRadius.all(Radius.circular(10)),
+                  // ),
+                  //
+
+
+
+
                 ),
                 // validator: (value) {
                 //   if (value == null || value.isEmpty) {
@@ -199,21 +204,21 @@ class _signupState extends State<signup> {
                 decoration: InputDecoration(
                   label: Text("Password"),
                   border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey, width: 1.5),
+                     // borderSide: BorderSide(color: Colors.grey, width: 1.5),
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                   hintText: "Enter Password",
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey, width: 1.5), // Default border color
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue, width: 2.0), // Border color when focused
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red, width: 1.5), // Border color when error occurs
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
+                  // enabledBorder: OutlineInputBorder(
+                  // //  borderSide: BorderSide(color: Colors.grey, width: 1.5), // Default border color
+                  //   borderRadius: BorderRadius.all(Radius.circular(10)),
+                  // ),
+                  // focusedBorder: OutlineInputBorder(
+                  //   borderSide: BorderSide( width: 2.0), // Border color when focused
+                  //   borderRadius: BorderRadius.all(Radius.circular(10)),
+                  // ),
+                  // errorBorder: OutlineInputBorder(
+                  //   borderSide: BorderSide(color: Colors.red, width: 1.5), // Border color when error occurs
+                  //   borderRadius: BorderRadius.all(Radius.circular(10)),
+                  // ),
                 ),
                 // validator: (value) {
                 //   if (value == null || value.isEmpty) {
@@ -227,14 +232,13 @@ class _signupState extends State<signup> {
 
               SizedBox(height: 24),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                 onPressed: (){
                   setState(() {
                     btn_text="Loading...";
                   });
                 createAccount(context);
                 },
-                child: Text(btn_text,style: TextStyle(color: Colors.white),),
+                child: Text(btn_text,),
               ),
             ],
           ),

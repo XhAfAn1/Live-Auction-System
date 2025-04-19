@@ -211,18 +211,76 @@ class _HomePageState extends State<HomePage> {
             ),
 
             drawer: Drawer(
-
+              shape: LinearBorder(),
               backgroundColor: Colors.white,
               width: 280,
-              child: ListView(
+              child: Column(
+               // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 100,),
-                if(FirebaseAuth.instance.currentUser != null)
-                  IconButton(onPressed: (){
-                    Authentication().signout(context);
-                  }, icon: Icon(Icons.logout)),
-                  SizedBox(height: 20,),
+                  DrawerHeader(
+                    margin: EdgeInsets.zero,
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: Colors.white, width: 0),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(image: AssetImage('assets/icon.jpg'),fit: BoxFit.fill),
+                          ),
+                        ),
+                        // CircleAvatar(
+                        //   radius: 28,
+                        //   backgroundImage: AssetImage('assets/avatar.png'), // Replace with your asset
+                        // // ),
+                        // SizedBox(height: 12),
+                        // Text(
+                        //   "Admin Panel",
+                        //   style: TextStyle(
+                        //     fontSize: 18,
+                        //     fontWeight: FontWeight.w600,
+                        //   ),
+                        // ),
 
+                      ],
+                    ),
+                   ),
+                  // SizedBox(
+                  //   height: 50,
+                  // ),
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        const Divider(height: 32, thickness: 0.5),
+                        ListTile(
+                          leading: Icon(Icons.home, size: 22),
+                          title: Text("Home", style: TextStyle(fontSize: 16)),
+                          onTap: () {},
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.shopping_bag_outlined, size: 22),
+                          title: Text("View My Items", style: TextStyle(fontSize: 16)),
+                          onTap: () {},
+                        ),
+
+                        const Divider(height: 32, thickness: 0.5),
+                        if (FirebaseAuth.instance.currentUser != null)
+                          ListTile(
+                            leading: Icon(Icons.logout, size: 22),
+                            title: Text("Logout", style: TextStyle(fontSize: 16)),
+                            onTap: () {
+                              Authentication().signout(context);
+                            },
+                          ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -237,6 +295,8 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Container(
                   child: Column(
+                  //  mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(10.0),
@@ -257,9 +317,14 @@ class _HomePageState extends State<HomePage> {
                           ),
                         // color: Colors.red,
                           width: double.infinity,
+                         // width: 400,
                           height: 40,
                         ),
                       ),
+                      SizedBox(
+                        height: 10,
+                      ),
+
                       Expanded(
                         child: StreamBuilder<QuerySnapshot>(
                           //stream: _firestore.collection('products').where("status",isEqualTo: "active").orderBy("auctionEndTime",descending: false).snapshots(),

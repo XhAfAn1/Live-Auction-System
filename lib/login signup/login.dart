@@ -72,7 +72,7 @@ class _loginState extends State<login> {
                   minimumSize: Size(120, 50),
                   shape: BeveledRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.zero)),
-                  backgroundColor: Colors.blueAccent),
+                  backgroundColor: Color(0xff0a3a0b),),
               onPressed: () async{
 
                 setState(() {
@@ -107,7 +107,7 @@ class _loginState extends State<login> {
               },
               child: Text("Sign Up",
                 style: TextStyle(
-                    color: Colors.blue,
+                    color: Color(0xff0a3a0b),
                     fontSize: 14,
                     fontWeight: FontWeight.bold),
               )

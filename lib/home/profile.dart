@@ -70,7 +70,7 @@ class _profileState extends State<profile> {
                 Card(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  elevation: 4,
+                  elevation: 1,
                   child: Padding(
                     padding: const EdgeInsets.all(20),
                     child: Column(
@@ -86,6 +86,7 @@ class _profileState extends State<profile> {
                   ),
                 ),
                 SizedBox(height: 30),
+                if(!user.admin)
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
