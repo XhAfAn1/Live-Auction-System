@@ -537,7 +537,8 @@ class _admin_panelState extends State<admin_panel> {
                                       ),
                                       SizedBox(height: 4),
                                       Text(
-                                        product.description,
+                                      //  product.description,
+                                        "Description",
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -556,7 +557,7 @@ class _admin_panelState extends State<admin_panel> {
                               ),
                               Divider(),
                               Text("Seller: ${product.sellerName}"),
-                              Text("Top-Bidder: ${product.highBidderName}"),
+                             // Text("Top-Bidder: ${product.highBidderName}"),
                               Text("Price: ${product.currentPrice}"),
                               Text(
                                 "Ends: ${product.auctionEndTime.toLocal().toString().split(' ')[0]}",

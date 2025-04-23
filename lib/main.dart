@@ -13,13 +13,22 @@ import 'package:liveauctionsystem/wrapper.dart';
 import 'firebase/firebase message api.dart';
 import 'firebase/firebase_options.dart';
 import 'login signup/login.dart';
+
+
+@pragma('vm:entry-point')
+Future<void> handleBackgroundMessage(RemoteMessage message) async {
+  print('Background message received: ${message.notification?.title}');
+}
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
- // await FirebaseApi().initNitifications();
+  FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
+
+  final firebaseApi = FirebaseApi();
+  await firebaseApi.initNotifications();
 
   // await Supabase.initialize(
   //   url: 'https://kwhmontckigovxyadkrf.supabase.co',   // Replace with your Supabase project URL
@@ -29,6 +38,11 @@ void main() async {
  // monitorAuctionStatus();
   runApp(MyApp());
 }
+
+
+
+
+
 Timer? _timer;
 class MyApp extends StatelessWidget {
 
@@ -45,6 +59,10 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+
+
+
 void monitorAuctionStatus() async{
 
 

@@ -43,6 +43,8 @@ dependencies:
   flutter_launcher_icons: ^0.14.3
   bkash: ^0.0.2
   firebase_messaging: ^15.2.5
+  flutter_local_notifications: ^19.1.0
+  http:
 
 
 
