@@ -6,6 +6,7 @@ import 'package:liveauctionsystem/classes/user.dart';
 
 import '../classes/Product.dart';
 import '../firebase/Authentication.dart';
+import '../firebase/firebase message api.dart';
 import '../home/profile.dart';
 import '../main.dart';
 import 'add_product.dart';
@@ -238,7 +239,12 @@ class _admin_panelState extends State<admin_panel> {
                       },
                     ),
                   ),
-                  Card(elevation: 0, color: Colors.yellow[50]),
+                  Card(
+                      child: ElevatedButton(onPressed: (){
+                        final token="cW8zQ6uaS5il5aQ5sevaUl:APA91bG_5Q9hbgcVfnDNIc5ZVgMAQj5f09uMubtpFKUm6vjmJ2tveIlPZlIi3Kz4NpT8Y7mDOQD3mfIeKwouDWOshBowZga-YUQXKZycu2uG-COnkhd0qmE";
+                        FirebaseApi().sendNotification(token,"hello","helohelohelo");
+                        }, child: Text("test")),
+                      elevation: 0, color: Colors.yellow[50]),
                   Card(elevation: 0, color: Colors.teal[50]),
                   Card(elevation: 0, color: Colors.pink[50]),
                 ],

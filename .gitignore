@@ -43,9 +43,10 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-
+/lib/firebase
 # Ignore Gradle project-specific cache directory
 .gradle
 
 # Ignore Gradle build output directory
 build
+lib/firebase/firebase message api.dart
