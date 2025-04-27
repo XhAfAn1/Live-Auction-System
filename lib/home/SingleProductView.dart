@@ -6,7 +6,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../classes/Product.dart';
+import '../firebase/ai_chatbot.dart';
 import '../login signup/login.dart';
+import '../main.dart';
 
 class Singleproductview extends StatefulWidget {
   final Product product;
@@ -43,7 +45,18 @@ class _SingleproductviewState extends State<Singleproductview> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(widget.product.name),
-        centerTitle: true,
+       // centerTitle: true,
+        actions: [
+          IconButton(onPressed: () {
+    if(FirebaseAuth.instance.currentUser == null)
+    showLogDiag(context);
+    else{
+     Navigator.push(context, MaterialPageRoute(builder: (context) => GeminiChatPage(init_text: widget.product.toMap(),),));
+    }
+
+
+    }, icon: Icon(Icons.live_help_outlined,color: Colors.black,), )
+        ],
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -139,7 +152,7 @@ class _SingleproductviewState extends State<Singleproductview> {
                                 return;
                               }
                               if(FirebaseAuth.instance.currentUser == null){
-                                showLogDiag();
+                                showLogDiag(context);
                                 return;
                               }
                               widget.product.placeBid(context, bidAmount, widget.product.status);
@@ -148,8 +161,8 @@ class _SingleproductviewState extends State<Singleproductview> {
                             // last moment time control
 
                               final remainingTime = widget.product.auctionEndTime.difference(DateTime.now());
-                              print(remainingTime);
-                              print("....................................................................");
+                            //  print(remainingTime);
+                              //print("....................................................................");
                               if (remainingTime.inMinutes < 5) {
                                 widget.product.auctionEndTime = widget.product.auctionEndTime.add(Duration(minutes: 5));
 
@@ -444,81 +457,7 @@ class _SingleproductviewState extends State<Singleproductview> {
 
   }
 
-  showLogDiag(){
-    showDialog(context: context,
-      builder: (context) =>
-          AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20), // Rounded corners
-            ),
-            backgroundColor: Colors.white,
-            title: Column(
-              children: [
-                Icon(
-                  Icons.warning_amber_rounded,
-                  color: Colors.orangeAccent,
-                  size: 50, // Large warning icon
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'You are not logged in',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-              ],
-            ),
-            content: Text(
-              'Please log in to access this feature.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Colors.black54),
-            ),
-            actionsAlignment: MainAxisAlignment.center,
-            actions: [
-              Wrap(
-                spacing: 10,
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => login()),
-                      );
-                    },
-                    child: const Text(
-                      "Login",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      side: BorderSide(color: Colors.grey.shade400),
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text("Cancel"),
-                  ),
-                ],
-              ),
-            ],
-          ),
-    );
 
-
-
-  }
 }
 
 class timer extends StatefulWidget {

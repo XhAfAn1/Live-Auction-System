@@ -4,10 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:liveauctionsystem/adminPanel/add_product.dart';
+import 'package:liveauctionsystem/home/private%20room.dart';
 import 'package:liveauctionsystem/home/profile.dart';
 import 'package:liveauctionsystem/login%20signup/login.dart';
 import '../classes/Product.dart';
 import '../firebase/Authentication.dart';
+import '../firebase/ai_chatbot.dart';
 import '../main.dart';
 import 'SingleProductView.dart';
 
@@ -266,7 +268,35 @@ class _HomePageState extends State<HomePage> {
                         ListTile(
                           leading: Icon(Icons.shopping_bag_outlined, size: 22),
                           title: Text("View My Items", style: TextStyle(fontSize: 16)),
-                          onTap: () {},
+                          onTap: () {
+                            if(FirebaseAuth.instance.currentUser == null)
+                              showLogDiag(context);
+                            else
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => showMyItems(),));
+
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.privacy_tip_outlined, size: 22),
+                          title: Text("Private room", style: TextStyle(fontSize: 16)),
+                          onTap: () {
+                            if(FirebaseAuth.instance.currentUser == null)
+                              showLogDiag(context);
+                            else
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => private_room(),));
+
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.privacy_tip_outlined, size: 22),
+                          title: Text("test ai", style: TextStyle(fontSize: 16)),
+                          onTap: () {
+                            if(FirebaseAuth.instance.currentUser == null)
+                              showLogDiag(context);
+                            else
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => GeminiChatPage(),));
+
+                          },
                         ),
 
                         const Divider(height: 32, thickness: 0.5),
