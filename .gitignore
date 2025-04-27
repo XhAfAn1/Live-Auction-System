@@ -50,4 +50,3 @@ app.*.map.json
 # Ignore Gradle build output directory
 build
 
-lib/firebase/firebase message api.dart
