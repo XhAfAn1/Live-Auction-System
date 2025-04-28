@@ -26,10 +26,12 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
+ if(!isSkiaWeb){
+   FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
 
-  final firebaseApi = FirebaseApi();
-  await firebaseApi.initNotifications();
+   final firebaseApi = FirebaseApi();
+   await firebaseApi.initNotifications();
+ }
 
   // await Supabase.initialize(
   //   url: 'https://kwhmontckigovxyadkrf.supabase.co',   // Replace with your Supabase project URL

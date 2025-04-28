@@ -11,6 +11,7 @@ import '../classes/Product.dart';
 import '../firebase/Authentication.dart';
 import '../firebase/ai_chatbot.dart';
 import '../main.dart';
+import '../test.dart';
 import 'SingleProductView.dart';
 
 class HomePage extends StatefulWidget {
@@ -295,6 +296,7 @@ class _HomePageState extends State<HomePage> {
                               showLogDiag(context);
                             else
                               Navigator.push(context, MaterialPageRoute(builder: (context) => GeminiChatPage(),));
+
 
                           },
                         ),
