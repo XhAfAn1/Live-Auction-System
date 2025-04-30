@@ -1,50 +1,39 @@
 import 'dart:async';
-
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:liveauctionsystem/app%20datas/theme%20data.dart';
+import 'package:liveauctionsystem/app datas/theme data.dart';
 import 'package:liveauctionsystem/home/homepage.dart';
 import 'package:liveauctionsystem/wrapper.dart';
-//import 'package:supabase_flutter/supabase_flutter.dart';
-
 import 'firebase/firebase message api.dart';
 import 'firebase/firebase_options.dart';
 import 'login signup/login.dart';
 
+bool get isSkiaWeb => kIsWeb;
 
 @pragma('vm:entry-point')
 Future<void> handleBackgroundMessage(RemoteMessage message) async {
   print('Background message received: ${message.notification?.title}');
 }
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
- if(!isSkiaWeb){
-   FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
+  if (!isSkiaWeb) {
+    FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
 
-   final firebaseApi = FirebaseApi();
-   await firebaseApi.initNotifications();
- }
+    final firebaseApi = FirebaseApi();
+    await firebaseApi.initNotifications();
+  }
 
-  // await Supabase.initialize(
-  //   url: 'https://kwhmontckigovxyadkrf.supabase.co',   // Replace with your Supabase project URL
-  //   anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3aG1vbnRja2lnb3Z4eWFka3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEwMjQ0NDYsImV4cCI6MjA1NjYwMDQ0Nn0.i_Xq0SEh6BqDZu1s_7Fb_CqHXwFDUiPrKlfnch9t9kQ', // Replace with your Supabase anon key
-  // );
-
- // monitorAuctionStatus();
   runApp(MyApp());
 }
-
-
-
-
 
 Timer? _timer;
 class MyApp extends StatelessWidget {

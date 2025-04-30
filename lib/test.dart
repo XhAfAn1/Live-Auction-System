@@ -66,6 +66,7 @@ class homepage extends StatelessWidget {
                           height: 60,
                           child:
                           Row(children: [
+
                             Container(width:8,),
                             CircleAvatar(
                               backgroundImage: NetworkImage("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRXxfn1j1vKFy8yJeBGl2AS6Dcah-lKgHofg&s"),
