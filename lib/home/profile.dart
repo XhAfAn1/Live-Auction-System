@@ -200,6 +200,7 @@ class showMyItems extends StatelessWidget {
 
                       ],
                     ),
+                    (!product.paid) ?
                     ElevatedButton(
                       onPressed: () {
                         final id= DateTime.parse(product.productId);
@@ -209,10 +210,24 @@ class showMyItems extends StatelessWidget {
                       },
                       child: Text('Pay now', style: TextStyle(color: Colors.white,fontSize: 12)),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
+                        minimumSize: Size(100, 40),
+                        maximumSize:Size(100, 40),
+                        backgroundColor: Color(0xff0a3a0b),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
-                    ),
+                    ):
+                    ElevatedButton(
+                      onPressed: null,
+                      child: Text('Paid', style: TextStyle(color: Color(0xff0a3a0b),fontSize: 12)),
+                      style: ElevatedButton.styleFrom(
+                        disabledBackgroundColor: Colors.white,
+                        backgroundColor: Colors.white,
+                        minimumSize: Size(100, 40),
+                        maximumSize:Size(100, 40) ,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),side: BorderSide(width:1,color: Color(0xff0a3a0b))),
+                      ),
+                    )
+                    ,
                   ],
                 ),
               );

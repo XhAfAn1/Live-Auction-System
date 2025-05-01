@@ -4,14 +4,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:liveauctionsystem/adminPanel/add_product.dart';
-import 'package:liveauctionsystem/home/private%20room.dart';
+import 'package:liveauctionsystem/home/private%20bidding/private%20room.dart';
 import 'package:liveauctionsystem/home/profile.dart';
 import 'package:liveauctionsystem/login%20signup/login.dart';
 import '../classes/Product.dart';
 import '../firebase/Authentication.dart';
 import '../firebase/ai_chatbot.dart';
 import '../main.dart';
-import '../test.dart';
 import 'SingleProductView.dart';
 
 class HomePage extends StatefulWidget {

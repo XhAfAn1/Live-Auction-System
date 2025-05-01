@@ -17,6 +17,7 @@ class Product {
   final String imageUrl;
   final String? category;
   String status;
+  bool paid;
 
   Product( {
     required this.productId,
@@ -33,6 +34,7 @@ class Product {
     required this.imageUrl,
     this.category,
     this.status = 'active',
+    this.paid = false
   });
 
   // Method to place a bid
@@ -143,6 +145,7 @@ class Product {
       'imageUrl': imageUrl,
       'category': category,
       'status': status,
+      'paid': paid
     };
   }
 
@@ -163,6 +166,7 @@ class Product {
       imageUrl: map['imageUrl'],
       category: map['category'],
       status: map['status'],
+      paid: map['paid'],
     );
   }
   // Convert Firestore document to Product object
@@ -183,6 +187,7 @@ class Product {
       imageUrl: data['imageUrl'],
       category: data['category'],
       status: data['status'],
+      paid: data['paid'],
     );
   }
 

@@ -7,6 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:liveauctionsystem/app datas/theme data.dart';
 import 'package:liveauctionsystem/home/homepage.dart';
+import 'package:liveauctionsystem/home/private%20bidding/private%20room.dart';
 import 'package:liveauctionsystem/wrapper.dart';
 import 'firebase/firebase message api.dart';
 import 'firebase/firebase_options.dart';
@@ -47,7 +48,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
     //  theme: ThemeData(colorScheme: LightDarkMode.dark),
       home: Wrapper(), // Pass initial user to wrapper
-     // home: HomePage(), // Pass initial user to wrapper
+     // home: private_room(), // Pass initial user to wrapper
     );
   }
 }
