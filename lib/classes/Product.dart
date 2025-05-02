@@ -93,7 +93,63 @@ class Product {
     }
   }
 
+  Future<void> placePrivateBid(context,int bidPrice,String status,String roomId) async {
+    if(bidPrice>currentPrice && status=='active'){
+      try {
+        String userId = FirebaseAuth.instance.currentUser!.uid;
 
+        // Fetch user details first (asynchronously)
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection("Users")
+            .doc(userId)
+            .get();
+
+        if (!userDoc.exists || !userDoc.data().toString().contains('name')) {
+          throw Exception("User data not found");
+        }
+
+        String userName = userDoc.get("name"); // Fetch user's name
+
+
+        // Save bid details in Firestore
+        await FirebaseFirestore.instance
+            .collection('private rooms')
+            .doc(roomId)
+            .collection("products")
+            .doc(productId)
+            .collection("biders")
+            .doc(DateTime.now().toString()) // Unique ID
+            .set({
+          "uid": userId,
+          "name": userName,
+          "timestamp": FieldValue.serverTimestamp(),
+          "bid": bidPrice
+        });
+        await
+        FirebaseFirestore.instance
+            .collection('private rooms')
+            .doc(roomId)
+            .collection("products")
+            .doc(productId).update({"currentPrice":bidPrice,"highBidderName":userName,"highBidderId":userId});
+
+        // FirebaseFirestore.instance
+        //     .collection('products')
+        //     .doc(productId).update({"highBidderName":userName,"highBidderId":userId});
+
+        currentPrice=bidPrice;
+
+        print("Bid placed successfully!");
+      } catch (e) {
+        print("Error placing bid: $e");
+      }
+    }
+    else if(bidPrice<=currentPrice && status=='active'){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Bid Price must be higher")));
+    }
+    else if(status=='ended'){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Auction has ended")));
+    }
+  }
   // Method to update the status of the auction
   void updateStatus() {
     final now = DateTime.now();
