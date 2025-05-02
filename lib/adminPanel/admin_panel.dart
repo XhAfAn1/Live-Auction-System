@@ -659,6 +659,239 @@ class _admin_panelState extends State<admin_panel> {
       );
     }
 
+    //private
+    if (id == 7) {
+      return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection("private rooms").snapshots(),
+        builder: (context, roomSnapshot) {
+          if (roomSnapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (!roomSnapshot.hasData || roomSnapshot.data!.docs.isEmpty) {
+            return Center(child: Text("No private rooms found."));
+          }
+
+          final rooms = roomSnapshot.data!.docs;
+
+          return ListView.builder(
+            padding: EdgeInsets.all(16),
+            itemCount: rooms.length,
+            itemBuilder: (context, roomIndex) {
+              final room = rooms[roomIndex];
+              final roomId = room.id;
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Room ID: $roomId",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  FutureBuilder<QuerySnapshot>(
+                    future: FirebaseFirestore.instance
+                        .collection("private rooms")
+                        .doc(roomId)
+                        .collection("products")
+                        .get(),
+                    builder: (context, productSnapshot) {
+                      if (productSnapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+
+                      if (!productSnapshot.hasData || productSnapshot.data!.docs.isEmpty) {
+                        return Text("No products in this room.");
+                      }
+
+                      final productDocs = productSnapshot.data!.docs;
+                      final products = productDocs
+                          .map((doc) => Product.fromFirestore(doc))
+                          .toList();
+
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: products.length,
+                        itemBuilder: (context, index) {
+                          final product = products[index];
+                          final docId = productDocs[index].id;
+
+                          return Card(
+                            elevation: 0.5,
+                            color: Colors.grey.shade50,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            margin: EdgeInsets.only(bottom: 16),
+                            child: Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.network(
+                                      product.imageUrl ?? '',
+                                      width: 80,
+                                      height: 80,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) => Container(
+                                        width: 80,
+                                        height: 80,
+                                        color: Colors.grey[300],
+                                        child: Icon(Icons.image_not_supported),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          product.name,
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          product.description,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Divider(),
+                                        Text("Seller: ${product.sellerName}"),
+                                        Text("Top-Bidder: ${product.highBidderName}"),
+                                        Text("Price: ${product.currentPrice}"),
+                                        Text(
+                                          "Ends: ${product.auctionEndTime.toLocal().toString().split(' ')[0]}",
+                                        ),
+                                        Text("Status: ${product.status}"),
+
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  SizedBox(height: 32),
+                ],
+              );
+            },
+          );
+        },
+      );
+
+    }
+    
+    // delivary request
+    if (id == 8) {
+      return StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection("products")
+            .where("paid", isEqualTo: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasData) {
+            final docs = snapshot.data!.docs;
+            final products = docs.map((doc) => Product.fromFirestore(doc)).toList();
+
+            return ListView.builder(
+              padding: EdgeInsets.all(16),
+              itemCount: products.length,
+              itemBuilder: (context, index) {
+                final product = products[index];
+                final buyerId = product.highBidderId;
+
+                return FutureBuilder<DocumentSnapshot>(
+                  future: FirebaseFirestore.instance.collection("Users").doc(buyerId).get(),
+                  builder: (context, userSnapshot) {
+                    if (userSnapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+
+                    final data = userSnapshot.data?.data() as Map<String, dynamic>? ?? {};
+                    final address = data['address'] ?? 'Address not available';
+
+                    return Card(
+                      elevation: 0.5,
+                      color: Colors.grey.shade50,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      margin: EdgeInsets.only(bottom: 16),
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                product.imageUrl ?? '',
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) => Container(
+                                  width: 80,
+                                  height: 80,
+                                  color: Colors.grey[300],
+                                  child: Icon(Icons.image_not_supported),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    product.name,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    product.description,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Divider(),
+                                  Text("Seller: ${product.sellerName}"),
+                                  Text("Buyer: ${product.highBidderName}"),
+                                  Text("Price: ${product.currentPrice}"),
+                                  Text("Address: $address"),
+                                  Text("Payment Status: Paid"),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            );
+          } else {
+            return Center(child: Text("No products found."));
+          }
+        },
+      );
+
+    }
   }
 
   @override
@@ -827,11 +1060,31 @@ class _admin_panelState extends State<admin_panel> {
                     },
                   ),
                   ListTile(
+                    leading: Icon(Icons.lock_outline, size: 22),
+                    title: Text("Private auctions", style: TextStyle(fontSize: 16)),
+                    onTap: () {
+                      setState(() {
+                        pid = 7;
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
                     leading: Icon(Icons.request_page_outlined, size: 22),
                     title: Text("Requests", style: TextStyle(fontSize: 16)),
                     onTap: () {
                       setState(() {
                         pid = 4;
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.photo_library_outlined, size: 22),
+                    title: Text("Delivary Request", style: TextStyle(fontSize: 16)),
+                    onTap: () {
+                      setState(() {
+                        pid = 8;
                       });
                       Navigator.pop(context);
                     },
