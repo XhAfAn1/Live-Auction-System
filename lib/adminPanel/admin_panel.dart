@@ -239,12 +239,7 @@ class _admin_panelState extends State<admin_panel> {
                       },
                     ),
                   ),
-                  Card(
-                      child: ElevatedButton(onPressed: (){
-                        final token="cW8zQ6uaS5il5aQ5sevaUl:APA91bG_5Q9hbgcVfnDNIc5ZVgMAQj5f09uMubtpFKUm6vjmJ2tveIlPZlIi3Kz4NpT8Y7mDOQD3mfIeKwouDWOshBowZga-YUQXKZycu2uG-COnkhd0qmE";
-                        FirebaseApi().sendNotification(token,"hello","helohelohelo");
-                        }, child: Text("test")),
-                      elevation: 0, color: Colors.yellow[50]),
+                  Card(elevation: 0, color: Colors.purple[50]),
                   Card(elevation: 0, color: Colors.teal[50]),
                   Card(elevation: 0, color: Colors.pink[50]),
                 ],
@@ -452,6 +447,18 @@ class _admin_panelState extends State<admin_panel> {
                                         );
                                       }
                                     }
+                                  },
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: IconButton(
+                                  icon: Icon(Icons.send, color: Colors.blue),
+                                  onPressed: () async{
+                                    final winner =await FirebaseFirestore.instance.collection("Users").doc(product.highBidderId).get();
+                                    final fcm = winner.get("fcmToken");
+                                    print(fcm);
+                                    FirebaseApi().sendNotification(fcm,"Congratulations","You have won the auction for ${product.name}");
                                   },
                                 ),
                               ),
@@ -791,7 +798,7 @@ class _admin_panelState extends State<admin_panel> {
       );
 
     }
-    
+
     // delivary request
     if (id == 8) {
       return StreamBuilder(

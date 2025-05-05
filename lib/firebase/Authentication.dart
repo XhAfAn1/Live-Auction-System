@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:liveauctionsystem/adminPanel/admin_panel.dart';
@@ -21,6 +22,15 @@ class Authentication {
       User? user = FirebaseAuth.instance.currentUser;
       print("success");
       print(FirebaseAuth.instance.currentUser);
+
+      //fcm token update
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        await FirebaseFirestore.instance.collection('Users').doc(user!.uid).update({
+          'fcmToken': fcmToken,
+        });
+      }
+
       final data=await FirebaseFirestore.instance.collection("Users").doc(user!.uid).get();
       UserModel cuser=UserModel.fromJson((data).data()!);
       await Future.delayed(Duration(seconds: 1));

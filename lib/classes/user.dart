@@ -6,6 +6,7 @@ class UserModel {
   String phoneNumber;
   String address;
   DateTime createdAt;
+  String token;
   bool admin;
 
   UserModel({
@@ -16,6 +17,7 @@ class UserModel {
     this.profileImageUrl = '',
     this.phoneNumber = '',
     this.address = '',
+    this.token = '',
     DateTime? createdAt,
   }) : createdAt = createdAt ?? DateTime.now();
 
@@ -29,6 +31,7 @@ class UserModel {
       'profileImageUrl': profileImageUrl,
       'phoneNumber': phoneNumber,
       'address': address,
+      'token': token,
       'createdAt': createdAt.toIso8601String(),
     };
   }
@@ -45,6 +48,7 @@ class UserModel {
       profileImageUrl: json['profileImageUrl'] ?? '',
       phoneNumber: json['phoneNumber'] ?? '',
       address: json['address'] ?? '',
+      token: json['token'] ?? '',
       createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
     );
   }
