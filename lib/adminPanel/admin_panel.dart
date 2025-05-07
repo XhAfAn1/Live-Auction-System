@@ -369,9 +369,7 @@ class _admin_panelState extends State<admin_panel> {
                       },
                     ),
                   ),
-                  Card(elevation: 0, color: Colors.purple[50]),
-                  Card(elevation: 0, color: Colors.teal[50]),
-                  Card(elevation: 0, color: Colors.pink[50]),
+
                 ],
               ),
             ),
@@ -391,24 +389,21 @@ class _admin_panelState extends State<admin_panel> {
                   return const Center(child: Text("No data available"));
                 }
 
-                // Process data
                 final docs = snapshot.data!.docs;
                 final products = docs.map((doc) => Product.fromFirestore(doc)).toList();
 
-                // Create line data points
+
                 final List<FlSpot> lineData = [];
                 for (int i = 0; i < products.length; i++) {
                   lineData.add(FlSpot(i.toDouble(), products[i].currentPrice.toDouble()));
                 }
 
-                // Calculate max Y value once
                 double maxY = 0;
                 if (lineData.isNotEmpty) {
                   maxY = lineData.reduce((a, b) => a.y > b.y ? a : b).y;
-                  maxY = maxY+100; // Add padding to max value
+                  maxY = maxY+100;
                 }
 
-                // Calculate Y-axis labels
                 final yLabels = [
                   maxY,
                   maxY - 500,
@@ -439,7 +434,7 @@ class _admin_panelState extends State<admin_panel> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Header with stats
+
                         const Text(
                           'Price chart',
                           style: TextStyle(
@@ -453,9 +448,9 @@ class _admin_panelState extends State<admin_panel> {
                         Expanded(
                           child: Row(
                             children: [
-                              // Y-axis labels
+
                               SizedBox(
-                                width: 40, // Slightly wider for larger numbers
+                                width: 40,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -510,7 +505,7 @@ class _admin_panelState extends State<admin_panel> {
                                                 final value = barSpot.y;
 
                                                 return LineTooltipItem(
-                                                  'Product ${index + 1}\n',
+                                                  '${docs[index]['name']}\n',
                                                   const TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,
@@ -533,7 +528,7 @@ class _admin_panelState extends State<admin_panel> {
                                           LineChartBarData(
                                             spots: lineData,
                                             isCurved: true,
-                                            color: const Color(0xFFFF5722), // Orange/red color
+                                            color:  Colors.green, // Orange/red color
                                             barWidth: 3,
                                             isStrokeCapRound: true,
                                             dotData: FlDotData(
@@ -541,15 +536,15 @@ class _admin_panelState extends State<admin_panel> {
                                               getDotPainter: (spot, percent, barData, index) {
                                                 return FlDotCirclePainter(
                                                   radius: 3,
-                                                  color: Colors.white,
+                                                  color: docs[index]['status'] == 'ended' ? Colors.white : Colors.white,
                                                   strokeWidth: 2,
-                                                  strokeColor:docs[index]['status'] == 'ended' ? Colors.green : Colors.orange,
+                                                  strokeColor:docs[index]['status'] == 'ended' ? Colors.black : Colors.green,
                                                 );
                                               },
                                             ),
                                             belowBarData: BarAreaData(
                                               show: true,
-                                              color: const Color(0xFFFF5722).withOpacity(0.1),
+                                              color: Colors.green.withOpacity(0.1),
                                             ),
                                           ),
                                         ],
@@ -566,7 +561,8 @@ class _admin_panelState extends State<admin_panel> {
                   ),
                 );
               },
-            )
+            ),
+
           ]
       ));
     }
