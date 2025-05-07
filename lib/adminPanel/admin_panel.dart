@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:liveauctionsystem/classes/user.dart';
 
@@ -19,6 +20,11 @@ class admin_panel extends StatefulWidget {
 }
 
 class _admin_panelState extends State<admin_panel> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
   int pid = 1;
 
   panelid(int id) {
@@ -370,10 +376,199 @@ class _admin_panelState extends State<admin_panel> {
               ),
             ),
             SizedBox(height: 10),
+            FutureBuilder<QuerySnapshot>(
+              future: FirebaseFirestore.instance.collection("products").where("status",isNotEqualTo: "upcoming").get(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-          ],
-        ),
-      );
+                if (snapshot.hasError) {
+                  return Center(child: Text("Error: ${snapshot.error}"));
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text("No data available"));
+                }
+
+                // Process data
+                final docs = snapshot.data!.docs;
+                final products = docs.map((doc) => Product.fromFirestore(doc)).toList();
+
+                // Create line data points
+                final List<FlSpot> lineData = [];
+                for (int i = 0; i < products.length; i++) {
+                  lineData.add(FlSpot(i.toDouble(), products[i].currentPrice.toDouble()));
+                }
+
+                // Calculate max Y value once
+                double maxY = 0;
+                if (lineData.isNotEmpty) {
+                  maxY = lineData.reduce((a, b) => a.y > b.y ? a : b).y;
+                  maxY = maxY+100; // Add padding to max value
+                }
+
+                // Calculate Y-axis labels
+                final yLabels = [
+                  maxY,
+                  maxY - 500,
+                  maxY - 800,
+                  maxY - 900,
+                  maxY - 950,
+                  maxY - 990,
+                ];
+
+                return Container(
+                  margin: const EdgeInsets.all(10.0),
+                  width: double.infinity, // Make it responsive
+                  height: 250,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.1),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Header with stats
+                        const Text(
+                          'Price chart',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        // Combined chart
+                        Expanded(
+                          child: Row(
+                            children: [
+                              // Y-axis labels
+                              SizedBox(
+                                width: 40, // Slightly wider for larger numbers
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: yLabels.map((value) => Text(
+                                    '${value.toInt()}',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 10,
+                                    ),
+                                  )).toList(),
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              // Chart area
+                              Expanded(
+                                child: Stack(
+                                  children: [
+                                    // Grid lines
+                                    CustomPaint(
+                                      size: Size.infinite,
+                                      painter: GridPainter(),
+                                    ),
+
+                                    // Line Chart
+                                    LineChart(
+                                      LineChartData(
+                                        gridData: FlGridData(show: false),
+                                        titlesData: FlTitlesData(
+                                          show: false,
+
+                                          leftTitles: AxisTitles(
+                                            sideTitles: SideTitles(showTitles: false),
+                                          ),
+                                          topTitles: AxisTitles(
+                                            sideTitles: SideTitles(showTitles: false),
+                                          ),
+                                          rightTitles: AxisTitles(
+                                            sideTitles: SideTitles(showTitles: false),
+                                          ),
+                                        ),
+                                        borderData: FlBorderData(show: false),
+                                        minX: 0,
+                                        maxX: lineData.length - 1.0,
+                                        minY: 0,
+                                        maxY: maxY,
+                                        lineTouchData: LineTouchData(
+                                          enabled: true,
+                                          touchTooltipData: LineTouchTooltipData(
+                                            getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
+                                              return touchedBarSpots.map((barSpot) {
+                                                final index = barSpot.x.toInt();
+                                                final value = barSpot.y;
+
+                                                return LineTooltipItem(
+                                                  'Product ${index + 1}\n',
+                                                  const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  children: [
+                                                    TextSpan(
+                                                      text: '${value.toInt()} ৳',
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.normal,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              }).toList();
+                                            },
+                                          ),
+                                        ),
+                                        lineBarsData: [
+                                          LineChartBarData(
+                                            spots: lineData,
+                                            isCurved: true,
+                                            color: const Color(0xFFFF5722), // Orange/red color
+                                            barWidth: 3,
+                                            isStrokeCapRound: true,
+                                            dotData: FlDotData(
+                                              show: true,
+                                              getDotPainter: (spot, percent, barData, index) {
+                                                return FlDotCirclePainter(
+                                                  radius: 3,
+                                                  color: Colors.white,
+                                                  strokeWidth: 2,
+                                                  strokeColor:docs[index]['status'] == 'ended' ? Colors.green : Colors.orange,
+                                                );
+                                              },
+                                            ),
+                                            belowBarData: BarAreaData(
+                                              show: true,
+                                              color: const Color(0xFFFF5722).withOpacity(0.1),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            )
+          ]
+      ));
     }
 
     //show All users
@@ -1262,5 +1457,30 @@ class _admin_panelState extends State<admin_panel> {
 
       body: panelid(pid),
     );
+  }
+}
+class GridPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.grey.withOpacity(0.2)
+      ..strokeWidth = 1;
+
+    final height = size.height;
+    final width = size.width;
+
+    // Draw horizontal grid lines
+    final lineCount = 5;
+    final lineSpacing = height / lineCount;
+
+    for (int i = 0; i <= lineCount; i++) {
+      final y = i * lineSpacing;
+      canvas.drawLine(Offset(0, y), Offset(width, y), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
   }
 }
