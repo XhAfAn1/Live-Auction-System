@@ -239,12 +239,138 @@ class _admin_panelState extends State<admin_panel> {
                       },
                     ),
                   ),
+                  Container(
+                    child: FutureBuilder(
+                      future:
+                      FirebaseFirestore.instance
+                          .collection("request")
+                          .get(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Card(
+                            elevation: 0,
+                            color: Colors.yellow[50],
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Total request"),
+                                  Expanded(
+                                    child: Center(
+                                      child: Text(
+                                        "0",
+                                        style: TextStyle(fontSize: 30),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        } else if (snapshot.hasData) {
+                          // return Center(child: Text("Total Products: ${snapshot.data!.docs.length}"));
+                          final totalSum = snapshot.data!.docs.length;
+                          return Card(
+                            elevation: 0,
+                            color: Colors.yellow[50],
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Total Request"),
+                                  Expanded(
+                                    child: Center(
+                                      child: Text(
+                                        "$totalSum",
+                                        style: TextStyle(fontSize: 30),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+
+                        }
+                        return Text("Data not found");
+                      },
+                    ),
+                  ),
+                  Container(
+                    child: FutureBuilder(
+                      future:
+                      FirebaseFirestore.instance
+                          .collection("products").where('paid',isEqualTo: true)
+                          .get(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Card(
+                            elevation: 0,
+                            color: Colors.green[50],
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("ready for delivery"),
+                                  Expanded(
+                                    child: Center(
+                                      child: Text(
+                                        "0",
+                                        style: TextStyle(fontSize: 30),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        } else if (snapshot.hasData) {
+                          // return Center(child: Text("Total Products: ${snapshot.data!.docs.length}"));
+                          final totalSum = snapshot.data!.docs.length;
+                          return Card(
+                            elevation: 0,
+                            color: Colors.green[50],
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("ready for delivery"),
+                                  Expanded(
+                                    child: Center(
+                                      child: Text(
+                                        "$totalSum",
+                                        style: TextStyle(fontSize: 30),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+
+                        }
+                        return Text("Data not found");
+                      },
+                    ),
+                  ),
                   Card(elevation: 0, color: Colors.purple[50]),
                   Card(elevation: 0, color: Colors.teal[50]),
                   Card(elevation: 0, color: Colors.pink[50]),
                 ],
               ),
             ),
+            SizedBox(height: 10),
+
           ],
         ),
       );
