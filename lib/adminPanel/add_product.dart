@@ -139,6 +139,8 @@ class _AddProductFormState extends State<AddProductForm> {
         'imageUrl': _imageUrl,
         'category': _categoryController.text,
         'status': _stats,
+        'paid': false,
+        'notified':false
       };
 
       await _firestore.collection('request').doc(DateTime.now().toString()).set(productData);

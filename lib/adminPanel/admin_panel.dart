@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -18,12 +20,20 @@ class admin_panel extends StatefulWidget {
   @override
   State<admin_panel> createState() => _admin_panelState();
 }
-
+Timer? _timerNoti;
 class _admin_panelState extends State<admin_panel> {
   @override
   void initState() {
     // TODO: implement initState
+    monitorEndNotification();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _timerNoti?.cancel();
   }
   int pid = 1;
 
@@ -47,11 +57,11 @@ class _admin_panelState extends State<admin_panel> {
                 ),
                 children: [
                   Container(
-                    child: FutureBuilder(
-                      future:
+                    child: StreamBuilder(
+                      stream:
                           FirebaseFirestore.instance
                               .collection("products")
-                              .get(),
+                              .snapshots(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -108,9 +118,9 @@ class _admin_panelState extends State<admin_panel> {
                   Container(
 
 
-                    child: FutureBuilder(
-                      future:
-                          FirebaseFirestore.instance.collection("Users").get(),
+                    child: StreamBuilder(
+                      stream:
+                          FirebaseFirestore.instance.collection("Users").snapshots(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -176,11 +186,11 @@ class _admin_panelState extends State<admin_panel> {
                     ),
                   ),
                   Container(
-                    child: FutureBuilder(
-                      future:
+                    child: StreamBuilder(
+                      stream:
                           FirebaseFirestore.instance
                               .collection("products")
-                              .get(),
+                              .snapshots(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -246,11 +256,11 @@ class _admin_panelState extends State<admin_panel> {
                     ),
                   ),
                   Container(
-                    child: FutureBuilder(
-                      future:
+                    child: StreamBuilder(
+                      stream:
                       FirebaseFirestore.instance
                           .collection("request")
-                          .get(),
+                          .snapshots(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -308,11 +318,11 @@ class _admin_panelState extends State<admin_panel> {
                     ),
                   ),
                   Container(
-                    child: FutureBuilder(
-                      future:
+                    child: StreamBuilder(
+                      stream:
                       FirebaseFirestore.instance
                           .collection("products").where('paid',isEqualTo: true)
-                          .get(),
+                          .snapshots(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -374,8 +384,8 @@ class _admin_panelState extends State<admin_panel> {
               ),
             ),
             SizedBox(height: 10),
-            FutureBuilder<QuerySnapshot>(
-              future: FirebaseFirestore.instance.collection("products").where("status",isNotEqualTo: "upcoming").get(),
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance.collection("products").where("status",isNotEqualTo: "upcoming").snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -401,16 +411,16 @@ class _admin_panelState extends State<admin_panel> {
                 double maxY = 0;
                 if (lineData.isNotEmpty) {
                   maxY = lineData.reduce((a, b) => a.y > b.y ? a : b).y;
-                  maxY = maxY+100;
+                  maxY = maxY;
                 }
 
                 final yLabels = [
                   maxY,
-                  maxY - 500,
-                  maxY - 800,
-                  maxY - 900,
-                  maxY - 950,
-                  maxY - 990,
+                  maxY - ((maxY/5)*1),
+                  maxY - ((maxY/5)*2),
+                  maxY - ((maxY/5)*3),
+                  maxY - ((maxY/5)*4),
+                  maxY - maxY,
                 ];
 
                 return Container(
@@ -436,7 +446,7 @@ class _admin_panelState extends State<admin_panel> {
                       children: [
 
                         const Text(
-                          'Price chart',
+                          'Bidding chart',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 16,
@@ -1453,6 +1463,32 @@ class _admin_panelState extends State<admin_panel> {
 
       body: panelid(pid),
     );
+  }
+
+
+
+  void monitorEndNotification() async{
+
+
+    _timerNoti= Timer.periodic(Duration(seconds: 1), (timer) async{
+
+      QuerySnapshot auctions = await FirebaseFirestore.instance
+          .collection('products')
+          .where('status', isEqualTo: 'ended')
+          .get();
+
+
+      for (var auction in auctions.docs) {
+        if(auction['notified']!=true){
+
+          final winner =await FirebaseFirestore.instance.collection("Users").doc(auction['highBidderId']).get();
+          final fcm = winner.get("fcmToken");
+          FirebaseApi().sendNotification(fcm,"Congratulations","You have won the auction for ${auction['name']}");
+          await auction.reference.update({'notified': true});
+        }
+
+      }
+    });
   }
 }
 class GridPainter extends CustomPainter {

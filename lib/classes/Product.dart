@@ -18,6 +18,7 @@ class Product {
   final String? category;
   String status;
   bool paid;
+  bool notified;
 
   Product( {
     required this.productId,
@@ -34,7 +35,8 @@ class Product {
     required this.imageUrl,
     this.category,
     this.status = 'active',
-    this.paid = false
+    this.paid = false,
+    this.notified = false
   });
 
   // Method to place a bid
@@ -201,7 +203,8 @@ class Product {
       'imageUrl': imageUrl,
       'category': category,
       'status': status,
-      'paid': paid
+      'paid': paid,
+      'notified': notified
     };
   }
 
@@ -223,6 +226,7 @@ class Product {
       category: map['category'],
       status: map['status'],
       paid: map['paid'],
+      notified: map['notified'],
     );
   }
   // Convert Firestore document to Product object
@@ -244,6 +248,7 @@ class Product {
       category: data['category'],
       status: data['status'],
       paid: data['paid'],
+      notified: data['notified'],
     );
   }
 
