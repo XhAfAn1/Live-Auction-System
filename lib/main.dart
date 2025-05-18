@@ -25,11 +25,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  final firebaseApi = FirebaseApi();
   if (!isSkiaWeb) {
     FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
-
-    final firebaseApi = FirebaseApi();
     await firebaseApi.initNotifications();
   }
 

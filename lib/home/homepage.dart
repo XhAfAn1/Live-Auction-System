@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:liveauctionsystem/adminPanel/add_product.dart';
@@ -315,7 +316,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-           floatingActionButton:ElevatedButton(style: ElevatedButton.styleFrom(
+           floatingActionButton:(!kIsWeb)?ElevatedButton(style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xff093125),
               foregroundColor: Colors.white,
               elevation: 1,
@@ -326,7 +327,7 @@ class _HomePageState extends State<HomePage> {
                 showLogDiag(context);
               else
               Navigator.push(context, MaterialPageRoute(builder: (context) => AddProductForm(),));
-            }, child: Text("Add Product")) ,
+            }, child: Text("Add Product")):null ,
 
             body:TabBarView(
               children: [
