@@ -69,10 +69,12 @@ class _loginState extends State<login> {
 
           ElevatedButton(
               style: ElevatedButton.styleFrom(
-                  minimumSize: Size(120, 50),
-                  shape: BeveledRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.zero)),
-                  backgroundColor: Color(0xff0a3a0b),),
+                backgroundColor: Color(0xff093125),
+                foregroundColor: Colors.white,
+                elevation: 1,
+                // padding: const EdgeInsets.symmetric(vertical: 18),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              ),
               onPressed: () async{
 
                 setState(() {

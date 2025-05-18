@@ -232,6 +232,13 @@ class _signupState extends State<signup> {
 
               SizedBox(height: 24),
               ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xff093125),
+                    foregroundColor: Colors.white,
+                    elevation: 1,
+                    // padding: const EdgeInsets.symmetric(vertical: 18),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
                 onPressed: (){
                   setState(() {
                     btn_text="Loading...";

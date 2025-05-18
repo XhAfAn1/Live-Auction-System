@@ -106,8 +106,8 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: BorderRadius.circular(40)
                 ),
                 child: //Text("AucSy",textAlign: TextAlign.center,style: TextStyle(color:Color(0xff093125),fontWeight: FontWeight.w700,fontSize: 25,fontFamily: ''),),
-                  Image.asset('assets/logo.png', width: 100, // Set explicit width
-                    height: 220,),
+                  Image.asset('assets/image.png', width: 120, // Set explicit width
+                    height: 200,),
 
               ),)),
               titleSpacing: 10,
@@ -272,7 +272,7 @@ class _HomePageState extends State<HomePage> {
                             if(FirebaseAuth.instance.currentUser == null)
                               showLogDiag(context);
                             else
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => showMyItems(),));
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => ShowMyItems(),));
 
                           },
                         ),
@@ -288,13 +288,13 @@ class _HomePageState extends State<HomePage> {
                           },
                         ),
                         ListTile(
-                          leading: Icon(Icons.privacy_tip_outlined, size: 22),
-                          title: Text("test ai", style: TextStyle(fontSize: 16)),
+                          leading: Icon(Icons.help_outline, size: 22),
+                          title: Text("Support", style: TextStyle(fontSize: 16)),
                           onTap: () {
                             if(FirebaseAuth.instance.currentUser == null)
                               showLogDiag(context);
                             else
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => GeminiChatPage(),));
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => GeminiChatPage(init_text: "This is a support chat for my auction app.",isSupport: true,),));
 
 
                           },
@@ -315,7 +315,13 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            floatingActionButton:ElevatedButton(onPressed: () {
+           floatingActionButton:ElevatedButton(style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xff093125),
+              foregroundColor: Colors.white,
+              elevation: 1,
+             // padding: const EdgeInsets.symmetric(vertical: 18),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            ),onPressed: () {
               if(FirebaseAuth.instance.currentUser == null)
                 showLogDiag(context);
               else
@@ -668,11 +674,11 @@ class _ProductCardState extends State<ProductCard> {
                        SizedBox(height: 8),
                        Container(
                            decoration: BoxDecoration(
-                             color: Color(0xffecffbd),
+                             color: Color(0xffa8ed4f),
                              borderRadius: BorderRadius.circular(2.5),
                            ),
                            padding: EdgeInsets.symmetric(horizontal: 6,vertical: 1),
-                           child: Text('Price: \৳${widget.product.startingPrice}',style: TextStyle(fontSize: 8,color:Color(0xffabd14c),fontWeight: FontWeight.bold),)),
+                           child: Text('Price: \৳${widget.product.startingPrice}',style: TextStyle(fontSize: 8,color:Color(0xff093125),fontWeight: FontWeight.bold),)),
                        SizedBox(height: 8),
                       // Text(widget.product.description,style: TextStyle(fontSize: 7,color:Colors.grey),maxLines: 3,overflow: TextOverflow.ellipsis,),
                        // SizedBox(height: 8),
@@ -701,7 +707,7 @@ class _ProductCardState extends State<ProductCard> {
                          crossAxisAlignment: CrossAxisAlignment.end,
                          children: [
                            Text('BID',style: TextStyle(fontSize: 10,color:Colors.grey)),
-                           Text('\৳${widget.product.currentPrice}',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,color: Color(0xffabd14c))),
+                           Text('\৳${widget.product.currentPrice}',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,color: Color(0xff093125))),
 
                          ],
                        ),
