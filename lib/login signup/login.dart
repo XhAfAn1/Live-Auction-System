@@ -160,23 +160,23 @@ class _loginState extends State<login> {
                       contentPadding: EdgeInsets.symmetric(vertical: 16),
                     ),
                   ),
-                  SizedBox(height: 16),
-                  // Forgot password
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        // Forgot password functionality can be added here
-                      },
-                      child: Text(
-                        "Forgot Password?",
-                        style: TextStyle(
-                          color: Color(0xff093125),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
+                  // SizedBox(height: 16),
+                  // // Forgot password
+                  // Align(
+                  //   alignment: Alignment.centerRight,
+                  //   child: TextButton(
+                  //     onPressed: () {
+                  //       // Forgot password functionality can be added here
+                  //     },
+                  //     child: Text(
+                  //       "Forgot Password?",
+                  //       style: TextStyle(
+                  //         color: Color(0xff093125),
+                  //         fontWeight: FontWeight.w500,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   SizedBox(height: 24),
                   // Login button
                   SizedBox(

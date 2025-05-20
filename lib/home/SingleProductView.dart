@@ -245,6 +245,7 @@ class _SingleproductviewState extends State<Singleproductview> {
                   MaterialPageRoute(
                     builder: (context) => GeminiChatPage(
                       init_text: widget.product.toMap(),
+                      isSupport: false,
                     ),
                   ),
                 );
@@ -355,10 +356,10 @@ class _SingleproductviewState extends State<Singleproductview> {
 
                             if (widget.product.currentPrice < newPrice) {
                               WidgetsBinding.instance.addPostFrameCallback((_) {
-                                setState(() {
+
                                   widget.product.currentPrice = newPrice;
                                   bidController.text = (newPrice + 1).toString();
-                                });
+
                               });
                             }
 
@@ -442,9 +443,9 @@ class _SingleproductviewState extends State<Singleproductview> {
                           widget.product.placeBid(context, bidAmount, widget.product.status);
 
                           final remainingTime = widget.product.auctionEndTime.difference(DateTime.now());
-                          if (remainingTime.inMinutes < 5) {
+                          if (remainingTime.inMinutes < 1) {
                             widget.product.auctionEndTime =
-                                widget.product.auctionEndTime.add(Duration(minutes: 5));
+                                widget.product.auctionEndTime.add(Duration(seconds: 10));
 
                             await FirebaseFirestore.instance
                                 .collection("products")
@@ -640,7 +641,7 @@ class _timerState extends State<timer> {
             widget.product.formatRemainingTime(_remainingTime),
             style: TextStyle(
               fontWeight: FontWeight.w600,
-              color: _remainingTime < 300 ? Colors.red.withOpacity(0.5) : Colors.black87,
+              color: _remainingTime < 60 ? Colors.red.withOpacity(0.5) : Colors.black87,
             ),
           )
         else

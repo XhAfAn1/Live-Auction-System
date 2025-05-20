@@ -40,290 +40,391 @@ class _privateproductviewState extends State<privateproductview> {
 
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(widget.product.name),
-        // centerTitle: true,
-        actions: [
-          IconButton(onPressed: () {
-            if(FirebaseAuth.instance.currentUser == null)
-              showLogDiag(context);
-            else{
-              Navigator.push(context, MaterialPageRoute(builder: (context) => GeminiChatPage(init_text: widget.product.toMap(),),));
-            }
-
-
-          }, icon: Icon(Icons.live_help_outlined,color: Colors.black,), )
-        ],
+  Widget build(BuildContext context) {    return Scaffold(
+    backgroundColor: Color(0xfffbfbfb),
+    appBar: AppBar(
+      backgroundColor: Color(0xfffbfbfb),
+      elevation: 0,
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back_ios, size: 20, color: Colors.black54),
+        onPressed: () => Navigator.pop(context),
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            children: [
-              if (widget.product.imageUrl != null)
-                Image.network(widget.product.imageUrl!, height: 150, width: double.infinity, fit: BoxFit.fitHeight),
-              SizedBox(height: 8),
-              Text(widget.product.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              SizedBox(height: 8),
-              Text(widget.product.description),
-              // ElevatedButton(onPressed: (){
-              //   showDiag(context,widget.product.highBidderName,widget.product.currentPrice.toString());
-              // }, child: Text("test_btn")),
-              SizedBox(height: 8),
-              timer(product: widget.product),
-              SizedBox(height: 8),
-              Text('Starting Price: \৳${widget.product.startingPrice.toStringAsFixed(2)}'),
-              SizedBox(height: 8),
-              StreamBuilder<DocumentSnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('private rooms')
-                    .doc(widget.roomId)
-                    .collection("products")
-                    .doc(widget.product.productId)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-
-                  if (!snapshot.hasData || !snapshot.data!.exists) {
-                    return Center(child: Text(snapshot.data.toString()));
-                  }
-
-
-
-                  var productData = snapshot.data!.data() as Map<String, dynamic>;
-                  widget.product.highBidderName=productData["highBidderName"];
-                  int newPrice = (productData["currentPrice"] as num).toInt();
-
-
-                  if (widget.product.currentPrice < newPrice) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      widget.product.currentPrice = newPrice;
-                      bidController.text = (newPrice+1).toString();
-
-                    });
-                  }
-
-                  DateTime endTime = DateTime.parse(productData['auctionEndTime']);
-                  if(widget.product.auctionEndTime != endTime){
-
-                    widget.product.auctionEndTime=endTime;
-
-                  }
-
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      //  Text("Remaining Time: ${_remainingTime ~/ 3600}h ${(_remainingTime % 3600) ~/ 60}m ${_remainingTime % 60}s"),
-                      Text('Current Price: \৳${newPrice.toStringAsFixed(2)}'),
-                      SizedBox(height: 8),
-                      Text('Top Bidder: ${productData["highBidderName"]}'),
-                      // Text('Status: ${widget.product.status}'),
-                      SizedBox(height: 20),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          if(widget.product.auctionStartTime.isBefore(DateTime.now()))
-                            Container(
-                              width: 100,
-                              child: TextField(
-                                controller: bidController,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(hintText: "Enter bid"),
-                              ),
-                            ),
-                          SizedBox(width: 10),
-                          if(widget.product.auctionStartTime.isBefore(DateTime.now()))
-                            ElevatedButton(
-                              onPressed: () async {
-
-
-
-                                int? bidAmount = int.tryParse(bidController.text);
-                                if (bidAmount == null) {
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(content: Text("Invalid bid amount")));
-                                  return;
-                                }
-                                if(FirebaseAuth.instance.currentUser == null){
-                                  showLogDiag(context);
-                                  return;
-                                }
-                                widget.product.placePrivateBid(context, bidAmount, widget.product.status,widget.roomId);
-
-
-                                // last moment time control
-
-                                final remainingTime = widget.product.auctionEndTime.difference(DateTime.now());
-                                //  print(remainingTime);
-                                //print("....................................................................");
-                                if (remainingTime.inMinutes < 5) {
-                                  widget.product.auctionEndTime = widget.product.auctionEndTime.add(Duration(minutes: 5));
-
-                                  await FirebaseFirestore.instance
-                                      .collection("products")
-                                      .doc(widget.product.productId)
-                                      .update({
-                                    "auctionEndTime": widget.product.auctionEndTime.toIso8601String(),
-                                  });
-                                }
-
-                                _timer?.cancel();
-                              },
-                              child: Text("Bid"),
-                            ),
-                          SizedBox(width: 20),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-
-                    ],
-                  );
-                },
+      title: Text(
+        widget.product.name,
+        style: TextStyle(color: Colors.black87, fontSize: 18),
+      ),
+      centerTitle: false,
+      actions: [
+        IconButton(
+          onPressed: () {
+            if (FirebaseAuth.instance.currentUser == null)
+              showLogDiag(context);
+            else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => GeminiChatPage(
+                    init_text: widget.product.toMap(),
+                    isSupport: false,
+                  ),
+                ),
+              );
+            }
+          },
+          icon: Icon(Icons.live_help_outlined, color: Colors.black54),
+        )
+      ],
+    ),
+    body: SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (widget.product.imageUrl != null)
+              Container(
+                height: 240,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.network(
+                    widget.product.imageUrl!,
+                    fit: BoxFit.fitHeight,
+                  ),
+                ),
               ),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.product.name,
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(maxLines: 3,
+                        widget.product.description,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.black87.withOpacity(0.5),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
+              ],
+            ),
+            SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Starting Price', style: TextStyle(fontSize: 14, color: Colors.grey)),
+                      SizedBox(height: 5),
+                      Text(
+                        '৳${widget.product.startingPrice}',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Current bid', style: TextStyle(fontSize: 14, color: Colors.grey)),
+                      SizedBox(height: 5),
+                      StreamBuilder<DocumentSnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('private rooms')
+                            .doc(widget.roomId)
+                            .collection("products")
+                            .doc(widget.product.productId)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return Text(
+                              '৳${widget.product.currentPrice.toStringAsFixed(2)}',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            );
+                          }
 
+                          if (!snapshot.hasData || !snapshot.data!.exists) {
+                            return Text(
+                              '৳${widget.product.currentPrice.toStringAsFixed(2)}',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            );
+                          }
 
-              StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('private rooms')
-                    .doc(widget.roomId).collection("products")
-                    .doc(widget.product.productId)
-                    .collection("biders")
-                    .orderBy("timestamp", descending: true)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return const Center(child: Padding(
-                        padding: EdgeInsets.all(100.0),
-                        child: Text('No bidders available.')));
-                  }
-                  else if (snapshot.connectionState == ConnectionState.active){
+                          var productData = snapshot.data!.data() as Map<String, dynamic>;
+                          widget.product.highBidderName = productData["highBidderName"];
+                          int newPrice = (productData["currentPrice"] as num).toInt();
 
-                    QuerySnapshot data= snapshot.data as QuerySnapshot;
-                    var msg=data.docs[0];
-                    var bidDocs = snapshot.data!.docs;
+                          if (widget.product.currentPrice < newPrice) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
 
-                    //status update test
+                                widget.product.currentPrice = newPrice;
+                                bidController.text = (newPrice + 1).toString();
 
-                    _timer?.cancel();
-                    statuscheck(widget.product.productId,context);
+                            });
+                          }
 
+                          DateTime endTime = DateTime.parse(productData['auctionEndTime']);
+                          if (widget.product.auctionEndTime != endTime) {
+                            widget.product.auctionEndTime = endTime;
+                          }
 
-
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: bidDocs.length,
-                      itemBuilder: (context, index) {
-                        var bidData = bidDocs[index].data() as Map<String, dynamic>;
-                        final name = bidData["name"] ?? "No name found";
-                        //  var email = bidData["email"] ?? "No email found";
-                        final bidAmount = bidData["bid"] ?? 0;
-                        Timestamp? timestamp = bidData["timestamp"];
-                        DateTime bidTime = timestamp?.toDate() ?? DateTime.now();
-                        Duration difference = DateTime.now().difference(bidTime);
-
-                        String timeAgo;
-                        if (difference.inSeconds < 60) {
-                          timeAgo = 'less than 1m ago';
-                        } else if (difference.inMinutes < 60) {
-                          timeAgo = '${difference.inMinutes}m ago';
-                        } else if (difference.inHours < 24) {
-                          timeAgo = '${difference.inHours}h ${difference.inMinutes % 60}m ago';
-                        } else {
-                          timeAgo = '${difference.inDays}d ago';
-                        }
-
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey.shade300),
-                              borderRadius: BorderRadius.circular(10),
+                          return Text(
+                            '৳${newPrice.toStringAsFixed(2)}',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: Colors.grey.shade300, width: 1),
+                  bottom: BorderSide(color: Colors.grey.shade300, width: 1),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.timer, size: 25, color: Colors.grey),
+                  SizedBox(width: 10,),
+                  timer(product: widget.product),
+                ],
+              ),
+            ),
+            //  SizedBox(height: 20),
+            // if (widget.product.status == 'active')
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: TextField(
+                            controller: bidController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              hintText: "Enter bid amount",
+                              contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                              border: InputBorder.none,
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () async {
+
+
+
+                      int? bidAmount = int.tryParse(bidController.text);
+                      if (bidAmount == null) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SnackBar(content: Text("Invalid bid amount")));
+                        return;
+                      }
+                      if(FirebaseAuth.instance.currentUser == null){
+                        showLogDiag(context);
+                        return;
+                      }
+                      widget.product.placePrivateBid(context, bidAmount, widget.product.status,widget.roomId);
+
+
+                      // last moment time control
+
+                      final remainingTime = widget.product.auctionEndTime.difference(DateTime.now());
+                      //  print(remainingTime);
+                      //print("....................................................................");
+                      if (remainingTime.inMinutes < 5) {
+                        widget.product.auctionEndTime = widget.product.auctionEndTime.add(Duration(minutes: 5));
+
+                        await FirebaseFirestore.instance
+                            .collection("products")
+                            .doc(widget.product.productId)
+                            .update({
+                          "auctionEndTime": widget.product.auctionEndTime.toIso8601String(),
+                        });
+                      }
+
+                      _timer?.cancel();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF093125),
+                      minimumSize: Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text(
+                      "Place your bid",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 5),
+            Text(
+              'Bidding History',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+            ),
+            SizedBox(height: 10),
+
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('private rooms')
+                  .doc(widget.roomId).collection("products")
+                  .doc(widget.product.productId)
+                  .collection("biders")
+                  .orderBy("timestamp", descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(40.0),
+                      child: Text(
+                        'No bidders available.',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  );
+                } else if (snapshot.connectionState == ConnectionState.active) {
+                  var bidDocs = snapshot.data!.docs;
+
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: bidDocs.length,
+                    itemBuilder: (context, index) {
+                      var bidData = bidDocs[index].data() as Map<String, dynamic>;
+                      final name = bidData["name"] ?? "No name found";
+                      final bidAmount = bidData["bid"] ?? 0;
+                      Timestamp? timestamp = bidData["timestamp"];
+                      DateTime bidTime = timestamp?.toDate() ?? DateTime.now();
+                      Duration difference = DateTime.now().difference(bidTime);
+
+                      String timeAgo;
+                      if (difference.inSeconds < 60) {
+                        timeAgo = 'less than 1m ago';
+                      } else if (difference.inMinutes < 60) {
+                        timeAgo = '${difference.inMinutes}m ago';
+                      } else if (difference.inHours < 24) {
+                        timeAgo = '${difference.inHours}h ${difference.inMinutes % 60}m ago';
+                      } else {
+                        timeAgo = '${difference.inDays}d ago';
+                      }
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 5,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 18,
+                                backgroundColor: Colors.grey.shade200,
+                                child: Text(
+                                  name.isNotEmpty ? name.substring(0, 1).toUpperCase() : "?",
+                                  style: TextStyle(color: Colors.black87),
+                                ),
+                              ),
+                              SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      '$name',
-                                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                                      name,
+                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                                     ),
-                                    const SizedBox(height: 4),
                                     Text(
                                       timeAgo,
                                       style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                                     ),
                                   ],
                                 ),
-                                Text(
-                                  '৳$bidAmount',
-                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                ),
-                              ],
-                            ),
+                              ),
+                              Text(
+                                '৳$bidAmount',
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                              ),
+                            ],
                           ),
-                        );
+                        ),
+                      );
+                    },
+                  );
+                } else
+                  return const Center(child: Text('No bidders available.'));
+              },
+            ),
+            SizedBox(height: 20),
+            // Simplified condition for showing bid button
 
-
-
-
-                        // return ListTile(
-                        //   title: Text('$name', style: const TextStyle(color: Colors.black)),
-                        //   subtitle: Text('\৳${bidAmount}',
-                        //       style: const TextStyle(color: Colors.grey)),
-                        // );
-
-
-                        //if i want to show personal data from the users//
-
-
-                        //email=func(email,bidData,index);
-                        // return FutureBuilder(
-                        //   future: func(email,bidData,index),
-                        //   builder: (context, snapshot) {
-                        //   email=snapshot.data ?? "Loading..";
-                        //  return ListTile(
-                        //     title: Text('$name:  $email', style: const TextStyle(color: Colors.black)),
-                        //     subtitle: Text('\৳${bidAmount}',
-                        //         style: const TextStyle(color: Colors.grey)),
-                        //   );
-                        // },);
-                      },
-                    );
-                  }
-
-
-                  else
-                    return const Center(child: Text('No bidders available.'));
-
-
-                },
-              ),
-
-
-            ],
-          ),
+            // SizedBox(height: 100),
+          ],
         ),
       ),
-    );
+    ),
+  );
   }
+
 
   func(email,bidData,index)async{
     try {
@@ -344,7 +445,7 @@ class _privateproductviewState extends State<privateproductview> {
         // print(now);
 
         DocumentSnapshot auction = await FirebaseFirestore.instance
-            .collection('products')
+            .collection('request')
             .doc(id)
             .get();
 
@@ -464,9 +565,10 @@ class _privateproductviewState extends State<privateproductview> {
 
 }
 
+
 class timer extends StatefulWidget {
   final Product product;
-  const timer({super.key, required this.product});
+  const timer({Key? key, required this.product}) : super(key: key);
 
   @override
   State<timer> createState() => _timerState();
@@ -483,10 +585,8 @@ class _timerState extends State<timer> {
     _startTimer();
   }
 
-
   void _startTimer() {
     _timer1 = Timer.periodic(Duration(seconds: 1), (timer) {
-
       setState(() {
         _remainingTime = widget.product.getRemainingTime();
         if (_remainingTime <= 0) {
@@ -504,18 +604,25 @@ class _timerState extends State<timer> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       children: [
-        if(widget.product.auctionStartTime.isBefore(DateTime.now()))
-          Text('Time Remaining: ${widget.product.formatRemainingTime(
-              _remainingTime)}', style: TextStyle(fontWeight: FontWeight.w700),)
+        if (widget.product.auctionStartTime.isBefore(DateTime.now()))
+          Text(
+            widget.product.formatRemainingTime(_remainingTime),
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: _remainingTime < 60 ? Colors.red.withOpacity(0.5) : Colors.black87,
+            ),
+          )
         else
-          Text('Auction has not Started yet', style: TextStyle(fontWeight: FontWeight.w700),)
-
-
+          Text(
+            'Auction has not Started yet',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          )
       ],
     );
   }
-
-
 }

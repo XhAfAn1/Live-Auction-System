@@ -17,26 +17,7 @@ class _CheckoutState extends State<Checkout> {
       'logo':
       'https://freelogopng.com/images/all_img/1656234841bkash-icon-png.png',
     },
-    // {
-    //   'name': 'UddoktaPay',
-    //   'logo':
-    //   'https://uddoktapay.com/assets/images/xlogo-icon.png.pagespeed.ic.IbVircDZ7p.png',
-    // },
-    // {
-    //   'name': 'SslCommerz',
-    //   'logo':
-    //   'https://apps.odoo.com/web/image/loempia.module/193670/icon_image?unique=c301a64',
-    // },
-    // {
-    //   'name': 'ShurjoPay',
-    //   'logo':
-    //   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGhMPK0wqLrv9z2Z2NKU17pUIpadsmODtVSQ&s',
-    // },
-    // {
-    //   'name': 'RazorPay',
-    //   'logo':
-    //   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTX_ZUKUT0JfSN8NHyaVBIlwr7MHsdrvSvopQ&s',
-    // },
+
   ];
 
   @override

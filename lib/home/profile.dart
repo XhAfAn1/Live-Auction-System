@@ -585,7 +585,7 @@ class ShowMyItems extends StatelessWidget {
           context: context,
           amount: totalPrice.toDouble(),
           merchantInvoiceNumber: '$name',
-          payerReference: 'Aucsy00$name'
+          payerReference: 'Aucsy00$name',
       );
 
       print(response.trxId);

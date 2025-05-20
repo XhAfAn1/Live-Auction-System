@@ -1248,7 +1248,7 @@ class _admin_panelState extends State<admin_panel> {
                                       "Top Bidder",
                                       product.highBidderName,
                                     ),
-                                    SizedBox(height: 8),
+                                   SizedBox(height: 8),
                                     _buildProductInfoRow(
                                       Icons.calendar_today_outlined,
                                       "Ends",
@@ -1257,6 +1257,12 @@ class _admin_panelState extends State<admin_panel> {
                                           .toString()
                                           .split(' ')[0],
                                     ),
+                                    if(product.status=='ended') SizedBox(height: 8),
+                                    if(product.status=='ended')  _buildProductInfoRow(
+                                      Icons.calendar_today_outlined,
+                                      "Payment Status",
+                                      product.paid.toString(),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -1264,6 +1270,27 @@ class _admin_panelState extends State<admin_panel> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
+                                  if(product.status=='ended' && product.paid==false)    Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Color(0xff093125),),
+                                      color: Colors.red.withOpacity(0.4),
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    child: IconButton(
+                                      icon: Icon(
+                                        Icons.payment,
+                                        color: Color(0xff093125),
+                                        size: 20,
+                                      ),
+                                      onPressed: () async {
+                                      await FirebaseFirestore.instance.collection("products").doc(product.productId).update({
+                                        "paid": true
+                                      });
+                                      },
+                                      tooltip: "Send notification",
+                                    ),
+                                  ),
+                                  SizedBox(width: 12),
                                   Container(
                                     decoration: BoxDecoration(
                                       border: Border.all(color: Color(0xff093125),),
