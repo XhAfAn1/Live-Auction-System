@@ -47,6 +47,7 @@ dependencies:
   http:
   googleapis_auth: ^1.4.0
   fl_chart: ^0.71.0
+  uuid: ^4.0.0
 
 
 

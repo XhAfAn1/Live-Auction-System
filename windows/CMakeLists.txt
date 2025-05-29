@@ -1,10 +1,10 @@
 # Project-level configuration.
-cmake_minimum_required(VERSION 3.14)
-project(car_rental_app LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.16)
+project(live_auction_system LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
-set(BINARY_NAME "car_rental_app")
+set(BINARY_NAME "live_auction_system")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
