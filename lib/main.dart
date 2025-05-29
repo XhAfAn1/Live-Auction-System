@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,7 +27,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   final firebaseApi = FirebaseApi();
-  if (!isSkiaWeb) {
+  if (!isSkiaWeb && !(Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
     FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
     await firebaseApi.initNotifications();
   }
